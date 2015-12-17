@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+################################################################################
+
+service_name=""
+
+################################################################################
+
+main() {
+  local name="$1"
+  local pid_file="$2"
+  local lock_file="$3"
+
+  [[ `id -u` != "0" ]] && exit 1
+  [[ $# -ne 3 ]] && exit 2
+
+  service_name="$name"
+
+  if [[ ! -e /etc/init.d/$service_name ]] ; then
+    log "Can't find init script for service."
+    exit 3
+  fi
+
+  [[ ! -e $lock_file ]] && exit 0
+
+  if [[ -e $pid_file ]] ; then
+    local pid=`cat $pid_file`
+    [[ -e /proc/$pid ]] && exit 0
+  fi
+  
+  log "Service is dead, restarting..."
+  restartService
+
+  exit $?
+}
+
+restartService() {
+  /etc/init.d/$service_name restart
+  return $?
+}
+
+log() {
+  echo "$@" | logger -i -t "${service_name}(kaosv-supervisor)"
+}
+
+################################################################################
+
+main $@
