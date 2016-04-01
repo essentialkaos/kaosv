@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.7.2"
+KV_VERSION="2.8.0"
 
 ###############################################################################
 
@@ -198,7 +198,7 @@ declare -A kv_handler_pre
 declare -A kv_handler_post
 declare -A kv_insec
 declare -A kv_alias
-declare -A kv_vars
+declare -A kv_args
 declare -A kv_dout
 declare -A kv
 
@@ -432,19 +432,27 @@ kv.addCommandAlias() {
 # Echo: No
 # 
 # Example:
-# kv.addCommandVars "stop" "force"
-kv.addCommandVars() {
+# kv.addCommandArgs "stop" "force"
+kv.addCommandArgs() {
   local comm="$1"
 
   shift
 
-  local var vars
+  local arg args
 
-  for var in $@ ; do
-    vars="$vars $var"
+  for arg in $@ ; do
+    vars="$args $arg"
   done
 
-  kv_vars["$comm"]="${vars:1:9999}"
+  kv_args["$comm"]="${vars:1:9999}"
+}
+
+# -
+# Alias for kv.addCommandArgs for compatibility with
+# earlier versions
+kv.addCommandVars() {
+  kv.addCommandArgs $@
+  return $?
 }
 
 # Disable automatic output redirection
@@ -1810,13 +1818,13 @@ kvUsage() {
   kv.show "${CL_BOLD}Usage:${CL_NORM} service ${CL_BROWN}${kv[script]}${CL_NORM} ${CL_GREEN}{$comm_list}${CL_NORM}"
   kv.show ""
 
-  local comm comm_vars comm_desc comm_ctl
+  local comm comm_args comm_desc comm_ctl
 
   local comm_tl=0
 
   for comm in ${kv_comm[@]} ; do
-    comm_vars="${kv_vars["$comm"]}"
-    comm_ctl=$((${#comm} + ${#comm_vars}))
+    comm_args="${kv_args["$comm"]}"
+    comm_ctl=$((${#comm} + ${#comm_args}))
 
     [[ $comm_ctl -gt $comm_tl ]] && comm_tl=$comm_ctl
   done
@@ -1825,11 +1833,11 @@ kvUsage() {
 
   for comm in ${kv_comm[@]} ; do
     comm_desc="${kv_desc["$comm"]}"
-    comm_vars="${kv_vars["$comm"]}"
+    comm_args="${kv_args["$comm"]}"
 
-    if [[ -n "$comm_vars" ]] ; then
+    if [[ -n "$comm_args" ]] ; then
       local comm_tld=$(($comm_tl - ${#comm} - 1))
-      printf "  ${CL_GREEN}%-${#comm}s${CL_NORM} ${CL_GREY}%-${comm_tld}s${CL_NORM} %s\n" "$comm" "$comm_vars" "$comm_desc"
+      printf "  ${CL_GREEN}%-${#comm}s${CL_NORM} ${CL_GREY}%-${comm_tld}s${CL_NORM} %s\n" "$comm" "$comm_args" "$comm_desc"
     else
       printf "  ${CL_GREEN}%-${comm_tl}s${CL_NORM} %s\n" "$comm" "$comm_desc"
     fi

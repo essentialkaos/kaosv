@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.7.2
+Version:         2.8.0
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Fri Apr 01 2016 Anton Novojilov <andy@essentialkaos.com> - 2.8.0-0
+- Method kv.addCommandVars renamed to kv.addCommandArgs
+
 * Tue Nov 17 2015 Anton Novojilov <andy@essentialkaos.com> - 2.7.2-0
 - Improved working with limits
 
