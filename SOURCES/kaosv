@@ -1774,7 +1774,7 @@ kvStatus() {
 
   if [[ "$status" == "$STATUS_WORKS" ]] ; then
     local pid=$(kv.getPid)
-    kv.show "Service ${kv[prog_name]} ${CL_GREY}[${pid}]${CL_NORM} is ${CL_GREEN}works${CL_NORM}."
+    kv.show "Service ${kv[prog_name]} ${CL_GREY}[${pid}]${CL_NORM} is ${CL_GREEN}working${CL_NORM}."
     return $ACTION_OK
   fi
 
