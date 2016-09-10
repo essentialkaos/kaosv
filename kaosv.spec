@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.8.1
+Version:         2.8.2
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Sun Sep 11 2016 Anton Novojilov <andy@essentialkaos.com> - 2.8.2-0
+- Using dark grey color instead light grey color
+
 * Thu Apr 28 2016 Anton Novojilov <andy@essentialkaos.com> - 2.8.1-0
 - Using 'is working' instead of 'is works'
 

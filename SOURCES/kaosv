@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.8.1"
+KV_VERSION="2.8.2"
 
 ###############################################################################
 
@@ -35,8 +35,10 @@ BLUE=34
 MAG=35
 # Code for cyan color
 CYAN=36
-# Code for grey color
+# Code for light grey color
 GREY=37
+# Code for dark grey color
+DARK=90
 
 if [[ $(consoletype) == "pty" ]] ; then
   CL_NORM="\e[${NORM}m"
@@ -49,6 +51,7 @@ if [[ $(consoletype) == "pty" ]] ; then
   CL_MAG="\e[${MAG}m"
   CL_CYAN="\e[${CYAN}m"
   CL_GREY="\e[${GREY}m"
+  CL_DARK="\e[${DARK}m"
   CL_BL_RED="\e[${RED};1m"
   CL_BL_GREEN="\e[${GREEN};1m"
   CL_BL_BROWN="\e[${BROWN};1m"
@@ -1105,8 +1108,8 @@ kv.exit() {
 # Code: No
 # Echo: No
 kv.disableColors() {
-  unset NORM BOLD UNLN RED GREEN BROWN BLUE MAG CYAN GREY
-  unset CL_NORM CL_BOLD CL_UNLN CL_RED CL_GREEN CL_BROWN CL_BLUE CL_MAG CL_CYAN CL_GREY
+  unset NORM BOLD UNLN RED GREEN BROWN BLUE MAG CYAN GREY DARK
+  unset CL_NORM CL_BOLD CL_UNLN CL_RED CL_GREEN CL_BROWN CL_BLUE CL_MAG CL_CYAN CL_GREY CL_DARK
   unset CL_BL_RED CL_BL_GREEN CL_BL_BROWN CL_BL_BLUE CL_BL_MAG CL_BL_CYAN CL_BL_GREY
   unset CL_UL_RED CL_UL_GREEN CL_UL_BROWN CL_UL_BLUE CL_UL_MAG CL_UL_CYAN CL_UL_GREY
   unset CL_BG_RED CL_BG_GREEN CL_BG_BROWN CL_BG_BLUE CL_BG_MAG CL_BG_CYAN CL_BG_GREY
@@ -1774,7 +1777,7 @@ kvStatus() {
 
   if [[ "$status" == "$STATUS_WORKS" ]] ; then
     local pid=$(kv.getPid)
-    kv.show "Service ${kv[prog_name]} ${CL_GREY}[${pid}]${CL_NORM} is ${CL_GREEN}working${CL_NORM}."
+    kv.show "Service ${kv[prog_name]} ${CL_DARK}[${pid}]${CL_NORM} is ${CL_GREEN}working${CL_NORM}."
     return $ACTION_OK
   fi
 
@@ -1837,7 +1840,7 @@ kvUsage() {
 
     if [[ -n "$comm_args" ]] ; then
       local comm_tld=$(($comm_tl - ${#comm} - 1))
-      printf "  ${CL_GREEN}%-${#comm}s${CL_NORM} ${CL_GREY}%-${comm_tld}s${CL_NORM} %s\n" "$comm" "$comm_args" "$comm_desc"
+      printf "  ${CL_GREEN}%-${#comm}s${CL_NORM} ${CL_DARK}%-${comm_tld}s${CL_NORM} %s\n" "$comm" "$comm_args" "$comm_desc"
     else
       printf "  ${CL_GREEN}%-${comm_tl}s${CL_NORM} %s\n" "$comm" "$comm_desc"
     fi
