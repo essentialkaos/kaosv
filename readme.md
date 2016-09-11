@@ -1,14 +1,14 @@
-### KAOSv
+## KAOSv
 
 `kaosv` is bash lib for SysV init scripts.
 
-#### Documentation
+### Documentation
 
 KAOSv contain inline documentation in shdoc format.
 
 Documentation for latest version can be found [here](https://docs.kaos.io/kaosv/). Also you can use [SHDoc](https://github.com/essentialkaos/shdoc) utility for viewing inline docs in your console.
 
-#### Examples
+### Examples
 
 * [beanstalkd](https://github.com/essentialkaos/kaos-repo/blob/master/beanstalkd/SOURCES/beanstalkd.init)
 * [ejabberd](https://github.com/essentialkaos/kaos-repo/blob/master/ejabberd/SOURCES/ejabberd.init)
@@ -21,6 +21,6 @@ Documentation for latest version can be found [here](https://docs.kaos.io/kaosv/
 * [twemproxy](https://github.com/essentialkaos/kaos-repo/blob/master/twemproxy/SOURCES/twemproxy.init)
 * [webkaos](https://github.com/essentialkaos/webkaos/blob/master/SOURCES/webkaos.init)
 
-#### License
+### License
 
 [EKOL](https://essentialkaos.com/ekol)
