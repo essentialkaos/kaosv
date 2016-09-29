@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.9.0
+Version:         2.9.1
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Thu Sep 29 2016 Anton Novojilov <andy@essentialkaos.com> - 2.9.1-0
+- Improved process pid search
+
 * Tue Sep 13 2016 Anton Novojilov <andy@essentialkaos.com> - 2.9.0-0
 - Added method kv.isServiceWorks for checking another service status
 
