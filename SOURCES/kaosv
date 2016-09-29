@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.9.0"
+KV_VERSION="2.9.1"
 
 ###############################################################################
 
@@ -179,8 +179,9 @@ OOM_DISABLE="-1000"
 HANDLER_PRE="pre"
 HANDLER_POST="post"
 
-LIMITS="/etc/security/limits.conf /etc/security/limits.d/*.conf"
 SYSCONFIG_DIR="/etc/sysconfig"
+
+LIMITS="/etc/security/limits.conf /etc/security/limits.d/*.conf"
 
 HELP_SEPARATOR_LENGTH=4
 
@@ -189,6 +190,8 @@ TMP_TEMPLATE="/tmp/kaosv.XXXXXXXX"
 CRON_DIR="/etc/cron.d"
 
 SUPERVISOR="/usr/local/share/kaosv/supervisor"
+
+PROCESS_EXCLUDE_PATTERN="^([0-9 ]{1,5}) (grep|egrep|service|/bin/grep|/bin/egrep|/sbin/service|/etc/init\.d|/etc/rc\.d/init\.d)"
 
 ###############################################################################
 
@@ -768,7 +771,10 @@ kv.getPid() {
 # local pid=$(kv.findPid "service -c /etc/config.conf")
 kv.findPid() {
   [[ -z "${kv[auto_pid_search]}" && -z "$1" ]] && return
-  ps aux | egrep -v "grep|service|init\.d" | egrep "${1:-${kv[search_pattern]}}" | tr -s " " | cut -f2 -d" " | head -1
+
+  local pattern="${1:-${kv[search_pattern]}}"
+
+  ps ax -o pid,cmd | egrep -v "$PROCESS_EXCLUDE_PATTERN" | grep "\\$pattern" | tr -s " " | cut -f1 -d" " | head -1
 }
 
 # Show message about action in progress
