@@ -13,34 +13,34 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.9.1"
+KV_VERSION="2.10.0"
 
 ###############################################################################
 
-# Code for reset prev color codes
-NORM=0
-# Code for bold text
-BOLD=1
-# Code for underline text
-UNLN=4
-# Code for red color
-RED=31
-# Code for green color
-GREEN=32
-# Code for yellow color
-BROWN=33
-# Code for blue color
-BLUE=34
-# Code for magenta color
-MAG=35
-# Code for cyan color
-CYAN=36
-# Code for light grey color
-GREY=37
-# Code for dark grey color
-DARK=90
+if [[ $(consoletype) == "pty" && -t 1 ]] ; then
+  # Code for reset prev color codes
+  NORM=0
+  # Code for bold text
+  BOLD=1
+  # Code for underline text
+  UNLN=4
+  # Code for red color
+  RED=31
+  # Code for green color
+  GREEN=32
+  # Code for yellow color
+  BROWN=33
+  # Code for blue color
+  BLUE=34
+  # Code for magenta color
+  MAG=35
+  # Code for cyan color
+  CYAN=36
+  # Code for light grey color
+  GREY=37
+  # Code for dark grey color
+  DARK=90
 
-if [[ $(consoletype) == "pty" ]] ; then
   CL_NORM="\e[${NORM}m"
   CL_BOLD="\e[${BOLD}m"
   CL_UNLN="\e[${UNLN}m"
@@ -284,6 +284,7 @@ kv[supervisor]=""
 
 # Script name (String)
 kv[script]=$(readlink -f "$0" | xargs -n1 basename)
+
 # Real user name (search real user name over sudo) (String)
 kv[real_user]=$(who -m | cut -f1 -d" " | egrep "[a-z]" || echo "root")
 

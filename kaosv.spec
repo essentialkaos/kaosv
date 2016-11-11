@@ -34,11 +34,11 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.9.1
+Version:         2.10.0
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
-URL:             http://essentialkaos.com
+URL:             https://github.com/essentialkaos/kaosv
 Vendor:          ESSENTIAL KAOS
 
 Source0:         https://source.kaos.io/%{name}/%{name}-%{version}.tar.bz2
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Fri Nov 11 2016 Anton Novojilov <andy@essentialkaos.com> - 2.10.0-0
+- Improved compatibility with systemd
+
 * Thu Sep 29 2016 Anton Novojilov <andy@essentialkaos.com> - 2.9.1-0
 - Improved process pid search
 
