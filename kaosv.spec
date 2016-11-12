@@ -85,6 +85,7 @@ rm -rf %{buildroot}
 %changelog
 * Fri Nov 11 2016 Anton Novojilov <andy@essentialkaos.com> - 2.10.0-0
 - Improved compatibility with systemd
+- Improved service status detection after system reboot
 
 * Thu Sep 29 2016 Anton Novojilov <andy@essentialkaos.com> - 2.9.1-0
 - Improved process pid search
