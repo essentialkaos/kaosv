@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # KAOSv is bash lib for SysV init scripts.
-# 
+#
 # This lib can be used as replacement for default /etc/init.d/functions lib.
-# 
+#
 
 if [[ "$BASH" == "/bin/sh" ]] ; then
   bash $0 $@
@@ -96,14 +96,14 @@ STATUS_STOPPED=2
 STATUS_BROKEN=3
 # Status code for situation when service doesn't works, but pid file is exist
 STATUS_DEAD_WITH_PID=4
-# Status code for situation when service doesn't works, but lock file is exist 
+# Status code for situation when service doesn't works, but lock file is exist
 STATUS_DEAD_WITH_LOCK=5
 # Status code for situation when service works, but pid file is not exist
 STATUS_NO_PID=6
 # Status code for situation when service works, but lock file is not exist
 STATUS_NO_LOCK=7
 
-# Status for action performed without errors 
+# Status for action performed without errors
 ACTION_OK=0
 # Status for action with some errors
 ACTION_ERROR=1
@@ -300,7 +300,7 @@ kv_pid="" # Pid cache
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # kv.go $@
 kv.go() {
@@ -347,7 +347,7 @@ kv.go() {
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # kv.require "2.7"
 kv.require() {
@@ -376,7 +376,7 @@ kv.require() {
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # kv.AddCommand "check" "Check config value" "myCheckFunc" true
 # kv.AddCommand "kill" "Kill connections" "myKillFunc"
@@ -420,7 +420,7 @@ kv.addHandler() {
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # kv.addCommandAlias "test" "check"
 kv.addCommandAlias() {
@@ -437,7 +437,7 @@ kv.addCommandAlias() {
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # kv.addCommandArgs "stop" "force"
 kv.addCommandArgs() {
@@ -519,10 +519,10 @@ kv.readSysconfig() {
 #
 # Code: Exit code (Boolean)
 # Echo: No
-# 
+#
 # Example:
 # local status=$(kv.run "/bin/echo" "1234" "ABCD")
-# 
+#
 # if [[ $status -eq 0 ]] ; then
 #   return $ACTION_OK
 # else
@@ -547,10 +547,10 @@ kv.run() {
 #
 # Code: Exit code (Boolean)
 # Echo: No
-# 
+#
 # Example:
 # kv.runAs "someuser" "/bin/echo" "1234" "ABCD"
-# 
+#
 # if [[ $? -eq 0 ]] ; then
 #   return $ACTION_OK
 # else
@@ -593,10 +593,10 @@ kv.runAs() {
 #
 # Code: Return code (Boolean)
 # Echo: No
-# 
+#
 # Example:
 # kv.daemonize "/usr/bin/daemon" "-d" "-p 80" "-v"
-# 
+#
 # if [[ $? -eq 0 ]] ; then
 #   return $ACTION_OK
 # else
@@ -756,7 +756,7 @@ kv.getStatus() {
 #
 # Code: No
 # Echo: Pid (Number)
-# 
+#
 # Example:
 # local pid=$(kv.getPid)
 # kv.sendSignal $pid
@@ -774,7 +774,7 @@ kv.getPid() {
 #
 # Code: No
 # Echo: Pid (Number)
-# 
+#
 # Example:
 # local pid=$(kv.findPid "service -c /etc/config.conf")
 kv.findPid() {
@@ -791,7 +791,7 @@ kv.findPid() {
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # kv.showProcessMessage "Generating data"
 # kv.showStatusMessage $ACTION_OK
@@ -805,7 +805,7 @@ kv.showProcessMessage() {
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # kv.showProcessMessage "Generating data"
 # kv.showStatusMessage $ACTION_OK
@@ -826,7 +826,7 @@ kv.showStatusMessage() {
 #
 # Code: Status (Boolean)
 # Echo: No
-# 
+#
 # Example:
 # if ! kv.getStartStatus ; then
 #   kv.error "Can't start service"
@@ -860,12 +860,12 @@ kv.getStartStatus() {
 #
 # Code: Status (Boolean)
 # Echo: No
-# 
+#
 # Example:
 # if kv.getStopStatus $pid ; then
 #   return $ACTION_OK
 # else
-#   kv.killProcess $pid 
+#   kv.killProcess $pid
 #   return $ACTION_FORCED
 # fi
 kv.getStopStatus() {
@@ -910,7 +910,7 @@ kv.killProcess() {
 #
 # Code: Yes
 # Echo: No
-# 
+#
 # Example:
 # if kv.isProcExist 12345 ; then
 #   kv.error "Process with pid 12345 is not exist"
@@ -925,7 +925,7 @@ kv.isProcExist() {
 #
 # Code: Yes
 # Echo: No
-# 
+#
 # Example:
 # if ! kv.hasUser "serviceuser" ; then
 #   kv.error "User serviceuser is not exist!"
@@ -940,7 +940,7 @@ kv.hasUser() {
 #
 # Code: Yes
 # Echo: No
-# 
+#
 # Example:
 # if kv.isBoundPort 8080 ; then
 #   kv.error "Port 8080 is bound"
@@ -983,7 +983,7 @@ kv.isServiceWorks() {
 #
 # Code: Yes
 # Echo: No
-# 
+#
 # Example:
 # if ! kv.isInstalled "java" "nc" ; then
 #   kv.error "Java and netcat is not installed"
@@ -1006,7 +1006,7 @@ kv.isInstalled() {
 #
 # Code: Yes
 # Echo: No
-# 
+#
 # Example:
 # if ! kv.sendSignal $SIGNAL_QUIT ; then
 #   kv.error "Can't send signal"
@@ -1029,7 +1029,7 @@ kv.sendSignal() {
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # kv.setOOMScoreAdj "-1000" "12345"
 # kv.setOOMScoreAdj "$OOM_DISABLE"
@@ -1065,7 +1065,7 @@ kv.checkSELinux() {
 #
 # Code: Yes
 # Echo: No
-# 
+#
 # Example:
 # if ! kv.isRoot ; then
 #   kv.error "This action require root privileges!"
@@ -1094,7 +1094,7 @@ kv.removeLock() {
 #
 # Code: Yes
 # Echo: No
-# 
+#
 # Example:
 # if kv.hasLock ; then
 #   echo "Lock file exist!"
@@ -1109,7 +1109,7 @@ kv.hasLock() {
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # kv.createPid 12345
 kv.createPid() {
@@ -1130,7 +1130,7 @@ kv.removePid() {
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # kv.exit
 # kv.exit 1
@@ -1163,7 +1163,7 @@ kv.disableColors() {
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # kv.error "My error message"
 # kv.error "My error message" 10
@@ -1180,7 +1180,7 @@ kv.error() {
 # 1: Message (String)
 #
 # Code: No
-# 
+#
 # Example:
 # kv.warn "My warning message"
 kv.warn() {
@@ -1194,7 +1194,7 @@ kv.warn() {
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # show "Signal sended"
 # show "Can't do some action" $RED
@@ -1239,7 +1239,7 @@ kv.version() {
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # kv.restoreSEContext "/path/to/file"
 kv.restoreSEContext() {
@@ -1258,7 +1258,7 @@ kv.restoreSEContext() {
 #
 # Code: No
 # Echo: Property value (String)
-# 
+#
 # Example:
 # local port=$(kv.readProperty "/path/to/my.conf" "port")
 # local host=$(kv.readProperty "/path/to/my.conf" "host" ":")
@@ -1278,7 +1278,7 @@ kv.readProperty() {
 #
 # Code: No
 # Echo: No
-# 
+#
 # Example:
 # kv.log "My very important message"
 kv.log() {
@@ -1531,7 +1531,7 @@ kvCheckPaths() {
 }
 
 # -
-# 
+#
 # Method return owner of file
 #
 # 1: File (String)
@@ -1547,7 +1547,7 @@ kvGetOwner() {
 #
 # Method check what given path is well formated and safe
 #
-# 1: Path (String) 
+# 1: Path (String)
 #
 # Code: Yes
 # Echo: No
@@ -1640,7 +1640,7 @@ kvStart() {
 }
 
 # -
-# 
+#
 # Default stop handler
 #
 # Code: Yes
@@ -1705,7 +1705,7 @@ kvStop() {
 }
 
 # -
-# 
+#
 # Default restart handler
 #
 # Code: Yes
@@ -1741,7 +1741,7 @@ kvRestart() {
 }
 
 # -
-# 
+#
 # Execute handler for some command
 #
 # 1: Command name (String)
@@ -1777,7 +1777,7 @@ kvExecDefHandler() {
 }
 
 # -
-# 
+#
 # Method fix some problems if service is not in defined status
 #
 # 1: Status code (Number)
@@ -1806,7 +1806,7 @@ kvFixIfNotInStatus() {
 }
 
 # -
-# 
+#
 # Default handler for status command
 #
 # Code: Yes
@@ -1849,7 +1849,7 @@ kvStatus() {
 
 # -
 #
-# Default handler for help command 
+# Default handler for help command
 #
 # Code: No
 # Echo: No
@@ -1891,7 +1891,7 @@ kvUsage() {
 }
 
 # -
-# 
+#
 # Append stack of default commands
 #
 # Code: No
@@ -1925,12 +1925,12 @@ kvIsFuncExist() {
   [[ -z "$func" ]] && return 1
 
   declare -f $func &> /dev/null
-  
+
   return $?
 }
 
 # -
-# 
+#
 # Method fix some problems with script (lock or pid files with stopped service,
 # deleted lock or pid file with working service, etc...)
 #
@@ -2038,7 +2038,7 @@ kvMkOutput() {
   kv[output]=$(mktemp $TMP_TEMPLATE)
 }
 
-# - 
+# -
 #
 # Method copy data from temporary file to log or logger
 #
