@@ -713,6 +713,13 @@ kv.statusIs() {
 # Echo: Status code (Number)
 kv.getStatus() {
   if [[ -f ${kv[pid_file]} && -r ${kv[pid_file]} ]] ; then
+    local pid_file_mod=$(kvGetFileModDate "${kv[pid_file]}")
+    local boot_date=$(kvGetBootTimestamp)
+
+    if [[ $boot_date -gt $pid_file_mod ]] ; then
+      echo $STATUS_DEAD_WITH_PID && return
+    fi
+
     local pid=$(kv.getPid)
 
     [[ -z "$pid" ]] && echo $STATUS_BROKEN && return
@@ -2047,6 +2054,31 @@ kvSendOutputToLogger() {
 
     echo -n > ${kv[output]}
   fi
+}
+
+# -
+#
+# Get system boot date as timestamp
+#
+# Code: No
+# Echo: Boot date (Number)
+kvGetBootTimestamp() {
+  local upt=$(cat "/proc/uptime" | cut -f1 -d".")
+  local now=$(date +%s)
+
+  echo $(( $now - $upt ))
+}
+
+# -
+#
+# Get file modification timestamp
+#
+# 1: File (String)
+#
+# Code: No
+# Echo: Modification timestamp (Number)
+kvGetFileModDate() {
+  stat -c '%Y' $1 2> /dev/null
 }
 
 ###############################################################################
