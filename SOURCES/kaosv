@@ -1000,7 +1000,7 @@ kv.isInstalled() {
   local app
 
   for app in "$@" ; do
-    type -p $app &> /dev/null
+    type -p "$app" &> /dev/null
     [[ $? -ne 0 ]] && return 1
   done
 
@@ -1879,7 +1879,7 @@ kvUsage() {
 
   comm_tl=$(($comm_tl + $HELP_SEPARATOR_LENGTH))
 
-  for comm in ${kv_comm[@]} ; do
+  for comm in "${kv_comm[@]}" ; do
     comm_desc="${kv_desc["$comm"]}"
     comm_args="${kv_args["$comm"]}"
 
@@ -2013,8 +2013,8 @@ kvFixProblems() {
 # Code: No
 # Echo: No
 kvExportSupervisorCron() {
-  echo "* * * * * root $SUPERVISOR ${kv[prog_name]} ${kv[pid_file]} ${kv[lock_file]}" > $CRON_DIR/${kv[prog_name]}-supervisor
-  chmod 644 $CRON_DIR/${kv[prog_name]}-supervisor
+  echo "* * * * * root $SUPERVISOR ${kv[prog_name]} ${kv[pid_file]} ${kv[lock_file]}" > "$CRON_DIR/${kv[prog_name]}-supervisor"
+  chmod 644 "$CRON_DIR/${kv[prog_name]}-supervisor"
 }
 
 # -
@@ -2024,8 +2024,8 @@ kvExportSupervisorCron() {
 # Code: No
 # Echo: No
 kvRemoveSupervisorCron() {
-  if [[ -e $CRON_DIR/${kv[prog_name]}-supervisor ]] ; then
-    rm -f $CRON_DIR/${kv[prog_name]}-supervisor
+  if [[ -e "$CRON_DIR/${kv[prog_name]}-supervisor" ]] ; then
+    rm -f "$CRON_DIR/${kv[prog_name]}-supervisor"
   fi
 }
 
@@ -2037,7 +2037,7 @@ kvRemoveSupervisorCron() {
 # Echo: No
 kvMkOutput() {
   [[ "${kv[output]}" == "/dev/null" ]] && return 1
-  [[ -e ${kv[output]} && -w ${kv[output]} ]] && return 0
+  [[ -e "${kv[output]}" && -w "${kv[output]}" ]] && return 0
 
   kv[output]=$(mktemp $TMP_TEMPLATE)
 }
@@ -2051,9 +2051,9 @@ kvMkOutput() {
 kvSendOutputToLogger() {
   if [[ -s ${kv[output]} ]] ; then
     if [[ -n "${kv[log]}" ]] ; then
-      cat ${kv[output]} >> ${kv[log]}
+      cat "${kv[output]}" >> "${kv[log]}"
     else
-      cat ${kv[output]} | logger -i -t "${kv[prog_name]}(kaosv)"
+      cat "${kv[output]}" | logger -i -t "${kv[prog_name]}(kaosv)"
     fi
 
     echo -n > ${kv[output]}
@@ -2070,7 +2070,7 @@ kvGetBootTimestamp() {
   local upt=$(cat "/proc/uptime" | cut -f1 -d".")
   local now=$(date +%s)
 
-  echo $(( $now - $upt ))
+  echo $(( now - upt ))
 }
 
 # -
