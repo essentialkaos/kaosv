@@ -501,8 +501,10 @@ kv.readSysconfig() {
 
   [[ ! -r $SYSCONFIG_DIR/$conf ]] && return 0
 
-  local ar=$(stat -c "%A" "$SYSCONFIG_DIR/$conf")
-  local oi=$(stat -c "%U" "$SYSCONFIG_DIR/$conf")
+  local ar oi
+
+  ar=$(stat -c "%A" "$SYSCONFIG_DIR/$conf")
+  oi=$(stat -c "%U" "$SYSCONFIG_DIR/$conf")
 
   if [[ "${ar:8:1}" != "-" ]] ; then
     kv.error "Can't read sysconfig file - unsecure access rights." && return 1
@@ -822,7 +824,7 @@ kv.showStatusMessage() {
     $ACTION_FORCED) kv.show "${CL_BROWN}FORCED${CL_NORM}" ;;
   esac
 
-  return $1
+  return "$1"
 }
 
 # Get status of starting service
@@ -843,11 +845,11 @@ kv.getStartStatus() {
 
   local i
 
-  for i in $(seq 1 ${kv[delay_start]:-15}) ; do
+  for i in $(seq 1 "${kv[delay_start]:-15}") ; do
     if [[ -f $cpid_file && -r $cpid_file ]] ; then
       [[ -n "$no_check_proc" ]] && return $ACTION_OK
 
-      local pid=$(head -1 $cpid_file)
+      local pid=$(head -1 "$cpid_file")
 
       if kv.isProcExist "$pid" ; then
         return $ACTION_OK
@@ -904,7 +906,7 @@ kv.killProcess() {
   [[ -z "$pid" ]] && pid=$(kv.findPid)
   [[ -z "$pid" ]] && return 1
 
-  kill -KILL $pid >/dev/null 2>&1
+  kill -KILL "$pid" >/dev/null 2>&1
 
   kv.removeLock
   kv.removePid
@@ -997,7 +999,7 @@ kv.isServiceWorks() {
 kv.isInstalled() {
   local app
 
-  for app in $@ ; do
+  for app in "$@" ; do
     type -p $app &> /dev/null
     [[ $? -ne 0 ]] && return 1
   done
@@ -1025,7 +1027,7 @@ kv.sendSignal() {
   [[ -n "$2" ]] && local pid="$2" || local pid=$(kv.getPid)
   [[ -z "$pid" || -z "$signal" ]] && return 1
 
-  kill -${signal} $pid >/dev/null 2>&1
+  kill "-${signal}" "$pid" >/dev/null 2>&1
 }
 
 # Set the adjustment level for the Out of memory (OOM) killer
@@ -1047,7 +1049,7 @@ kv.setOOMScoreAdj() {
   [[ -z "$pid" ]] && pid=$(kv.getPid)
   [[ -z "$pid" ]] && return 1
 
-  echo "$adj" > /proc/$pid/oom_score_adj
+  echo "$adj" > "/proc/$pid/oom_score_adj"
 }
 
 # Check SE Linux
@@ -1085,7 +1087,7 @@ kv.isRoot() {
 # Code: No
 # Echo: No
 kv.createLock() {
-  touch ${kv[lock_file]} &> /dev/null
+  touch "${kv[lock_file]}" &> /dev/null
 }
 
 # Remove lock file
@@ -1093,7 +1095,7 @@ kv.createLock() {
 # Code: No
 # Echo: No
 kv.removeLock() {
-  rm -rf ${kv[lock_file]} &> /dev/null
+  rm -rf "${kv[lock_file]}" &> /dev/null
 }
 
 # Return 0 if lock file exist
@@ -1106,7 +1108,7 @@ kv.removeLock() {
 #   echo "Lock file exist!"
 # fi
 kv.hasLock() {
-  [[ -f ${kv[lock_file]} ]] && return 1 || return 0
+  [[ -f "${kv[lock_file]}" ]] && return 1 || return 0
 }
 
 # Create pid file
@@ -1119,7 +1121,7 @@ kv.hasLock() {
 # Example:
 # kv.createPid 12345
 kv.createPid() {
-  echo "$1" > ${kv[pid_file]}
+  echo "$1" > "${kv[pid_file]}"
 }
 
 # Remove pid file
@@ -1127,7 +1129,7 @@ kv.createPid() {
 # Code: No
 # Echo: No
 kv.removePid() {
-  rm -f ${kv[pid_file]} &> /dev/null
+  rm -f "${kv[pid_file]}" &> /dev/null
 }
 
 # Exit from the script
@@ -1143,9 +1145,9 @@ kv.removePid() {
 kv.exit() {
   kvSendOutputToLogger
 
-  rm -f ${TMP_TEMPLATE//X/}* &> /dev/null
+  rm -f "${TMP_TEMPLATE//X/}*" &> /dev/null
 
-  exit ${1:-0}
+  exit "${1:-0}"
 }
 
 ###############################################################################
