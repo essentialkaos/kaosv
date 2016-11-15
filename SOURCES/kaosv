@@ -1889,7 +1889,7 @@ kvUsage() {
 
     if [[ -n "$comm_args" ]] ; then
       local comm_tld=$(($comm_tl - ${#comm} - 1))
-      printf "  ${CL_GREEN}%-${#comm}s${CL_NORM} ${CL_DARK}%-${comm_tld}s${CL_NORM} %s\n" "$comm" "$comm_args" "$comm_desc"
+      printf "  ${CL_GREEN}%-${#comm}s${CL_NORM} ${CL_GREY}%-${comm_tld}s${CL_NORM} %s\n" "$comm" "$comm_args" "$comm_desc"
     else
       printf "  ${CL_GREEN}%-${comm_tl}s${CL_NORM} %s\n" "$comm" "$comm_desc"
     fi
