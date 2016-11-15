@@ -883,7 +883,7 @@ kv.getStopStatus() {
 
   local i
 
-  for i in $(seq 1 ${kv[delay_stop]:-30}) ; do
+  for i in $(seq 1 "${kv[delay_stop]:-30}") ; do
     if ! kv.isProcExist "$pid" ; then
       return $ACTION_OK
     fi
@@ -1179,7 +1179,7 @@ kv.error() {
   kv.show "$1" $RED
 
   if [[ -n "$2" ]] ; then
-    kv.exit ${2:-1}
+    kv.exit "${2:-1}"
   fi
 }
 
@@ -1212,6 +1212,12 @@ kv.show() {
   else
     echo -e "$@"
   fi
+
+  if [[ -n "$2" && -n "$COLORS_ALLOWED" ]] ; then
+    echo -e "\e[${2}m${1}\e[0m"
+  else
+    echo -e "$*"
+  fi
 }
 
 # Show message without new line symbol
@@ -1222,15 +1228,11 @@ kv.show() {
 # Code: No
 # Echo: No
 kv.showm() {
-  local message
-
   if [[ -n "$2" && -n "$COLORS_ALLOWED" ]] ; then
-    message=$(echo "\e["$2"m"$1"${CL_NORM}")
+    echo -e -n "\e[${2}m${1}\e[0m"
   else
-    message="$@"
+    echo -e -n "$*"
   fi
-
-  printf "$message"
 }
 
 # Show version of kaosv
@@ -1253,8 +1255,8 @@ kv.version() {
 kv.restoreSEContext() {
   local target
 
-  for target in $@ ; do
-    [[ -x /sbin/restorecon ]] && /sbin/restorecon $target
+  for target in "$@" ; do
+    [[ -x /sbin/restorecon ]] && /sbin/restorecon "$target"
   done
 }
 
@@ -1290,10 +1292,10 @@ kv.readProperty() {
 # Example:
 # kv.log "My very important message"
 kv.log() {
-  local message="$@"
+  local message="$*"
 
   if [[ -n "${kv[log]}" ]] ; then
-    echo "$message" >> ${kv[log]}
+    echo "$message" >> "${kv[log]}"
   else
     echo "$message" | logger -i -t "${kv[prog_name]}(kaosv)"
   fi
@@ -1346,27 +1348,27 @@ kvPrepare() {
     fi
   fi
 
-  [[ -z "${kv[pid_file]}" ]] && kv[pid_file]=${kv[pid_dir]}/${kv[script]}.pid
-  [[ -z "${kv[lock_file]}" ]] && kv[lock_file]=${kv[lock_dir]}/${kv[script]}
+  [[ -z "${kv[pid_file]}" ]] && kv[pid_file]="${kv[pid_dir]}/${kv[script]}.pid"
+  [[ -z "${kv[lock_file]}" ]] && kv[lock_file]="${kv[lock_dir]}/${kv[script]}"
 
   if [[ -n "${kv[log]}" ]] ; then
-    local log_dir=$(dirname ${kv[log]})
+    local log_dir=$(dirname "${kv[log]}")
 
     if ! kvIsWellPath "$log_dir" ; then
       kv.error "Can't execute this init script. Property log contains wrong path (${kv[log]})." $ACTION_ERROR
     fi
 
-    if [[ ! -d $log_dir ]] ; then
+    if [[ ! -d "$log_dir" ]] ; then
       kv.error "Log file directory <$log_dir> is not exist." $ACTION_ERROR
     fi
 
-    if [[ -f ${kv[log]} && ! -w ${kv[log]} ]] ; then
+    if [[ -f "${kv[log]}" && ! -w "${kv[log]}" ]] ; then
       kv.error "Log file is not writable." $ACTION_ERROR
     fi
   fi
 
-  kv[pid_dir]=$(dirname ${kv[pid_file]})
-  kv[lock_dir]=$(dirname ${kv[lock_file]})
+  kv[pid_dir]=$(dirname "${kv[pid_file]}")
+  kv[lock_dir]=$(dirname "${kv[lock_file]}")
 
   if ! kvIsWellPath "${kv[pid_dir]}" ; then
     kv.error "Can't use pid dir <${kv[pid_dir]}>." $ACTION_ERROR
