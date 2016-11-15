@@ -1498,7 +1498,7 @@ kvGetNicesCmd() {
 
   fi
 
-  echo $result
+  echo "$result"
 }
 
 # -
@@ -1510,7 +1510,7 @@ kvGetNicesCmd() {
 kvCheckPaths() {
   if [[ ! -e ${kv[pid_dir]} ]] ; then
     if kv.isRoot ; then
-      mkdir -p ${kv[pid_dir]} &> /dev/null
+      mkdir -p "${kv[pid_dir]}" &> /dev/null
     fi
   fi
 
@@ -1521,21 +1521,21 @@ kvCheckPaths() {
           kv.error "Can't change owner for pid directory <${kv[pid_dir]}> - user <${kv[user]}> not exist on system." $ACTION_ERROR
         fi
 
-        chown ${kv[user]} ${kv[pid_dir]}
+        chown "${kv[user]}" "${kv[pid_dir]}"
       fi
     fi
   fi
 
-  if [[ ! -e ${kv[lock_dir]} ]] ; then
+  if [[ ! -e "${kv[lock_dir]}" ]] ; then
     if kv.isRoot ; then
-      mkdir -p ${kv[lock_dir]} &> /dev/null
+      mkdir -p "${kv[lock_dir]}" &> /dev/null
     fi
   fi
 
-  if [[ ! -w ${kv[lock_dir]} ]] ; then
+  if [[ ! -w "${kv[lock_dir]}" ]] ; then
     kv.error "Lock dir <${kv[lock_dir]}> is not writable." $ACTION_ERROR
   fi
-   if [[ ! -w ${kv[pid_dir]} ]] ; then
+   if [[ ! -w "${kv[pid_dir]}" ]] ; then
     kv.error "Pid dir <${kv[pid_dir]}> is not writable." $ACTION_ERROR
   fi
 }
@@ -1610,9 +1610,9 @@ kvStart() {
   kvFixIfNotInStatus $STATUS_STOPPED
 
   if [[ -n "${kv_dout[start_pre]}" ]] ; then
-    kvExecDefHandler "start" "pre" $@
+    kvExecDefHandler "start" "pre" "$@"
   else
-    kvExecDefHandler "start" "pre" $@ &>> ${kv[output]}
+    kvExecDefHandler "start" "pre" "$@" &>> "${kv[output]}"
   fi
 
   retcode=$?
@@ -1620,14 +1620,14 @@ kvStart() {
   [[ $retcode -ne 0 ]] && return $retcode
 
   kv.showProcessMessage "Starting ${kv[prog_name]}"
-  kvExecDefHandler "start" "" $@ &>> ${kv[output]}
+  kvExecDefHandler "start" "" "$@" &>> "${kv[output]}"
   retcode=$?
   kv.showStatusMessage "$retcode"
 
   if [[ ${kv_dout[start_post]} ]] ; then
-    kvExecDefHandler "start" "post" $@
+    kvExecDefHandler "start" "post" "$@"
   else
-    kvExecDefHandler "start" "post" $@ &>> ${kv[output]}
+    kvExecDefHandler "start" "post" "$@" &>> "${kv[output]}"
   fi
 
   [[ $? -ne $retcode && $retcode -eq 0 ]] && retcode=$?
@@ -1672,9 +1672,9 @@ kvStop() {
   kvFixIfNotInStatus $STATUS_WORKS
 
   if [[ -n "${kv_dout[stop_pre]}" ]] ; then
-    kvExecDefHandler "stop" "pre" $@
+    kvExecDefHandler "stop" "pre" "$@"
   else
-    kvExecDefHandler "stop" "pre" $@ &>> ${kv[output]}
+    kvExecDefHandler "stop" "pre" "$@" &>> "${kv[output]}"
   fi
 
   retcode=$?
@@ -1684,14 +1684,14 @@ kvStop() {
   kv_pid=$(kv.getPid)
 
   kv.showProcessMessage "Stopping ${kv[prog_name]}"
-  kvExecDefHandler "stop" "" $@ &>> ${kv[output]}
+  kvExecDefHandler "stop" "" "$@" &>> "${kv[output]}"
   retcode=$?
   kv.showStatusMessage "$retcode"
 
   if [[ -n "${kv_dout[stop_post]}" ]] ; then
-    kvExecDefHandler "stop" "post" $@
+    kvExecDefHandler "stop" "post" "$@"
   else
-    kvExecDefHandler "stop" "post" $@ &>> ${kv[output]}
+    kvExecDefHandler "stop" "post" "$@" &>> "${kv[output]}"
   fi
 
   [[ $? -ne $retcode && $retcode -eq 0 ]] && retcode=$?
@@ -1726,27 +1726,27 @@ kvRestart() {
   kvCheckPaths
 
   if [[ -n "${kv_dout[restart_pre]}" ]] ; then
-    kvExecDefHandler "restart" "pre" $@
+    kvExecDefHandler "restart" "pre" "$@"
   else
-    kvExecDefHandler "restart" "pre" $@ &>> ${kv[output]}
+    kvExecDefHandler "restart" "pre" "$@" &>> "${kv[output]}"
   fi
 
-  kvExecDefHandler "restart" "" $@ &>> ${kv[output]}
+  kvExecDefHandler "restart" "" "$@" &>> "${kv[output]}"
 
   [[ $? -ne 0 ]] && return $ACTION_ERROR
 
   kvStop
 
-  [[ ${kv[delay_restart]} -ne 0 ]] && sleep ${kv[delay_restart]}
+  [[ ${kv[delay_restart]} -ne 0 ]] && sleep "${kv[delay_restart]}"
 
   kvStart
 
   [[ $? -ne 0 ]] && return $ACTION_ERROR
 
   if [[ -n "${kv_dout[restart_post]}" ]] ; then
-    kvExecDefHandler "restart" "post" $@
+    kvExecDefHandler "restart" "post" "$@"
   else
-    kvExecDefHandler "restart" "post" $@ &>> ${kv[output]}
+    kvExecDefHandler "restart" "post" "$@" &>> "${kv[output]}"
   fi
 }
 
