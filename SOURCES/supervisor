@@ -33,7 +33,7 @@ main() {
   [[ ! -e "$lock_file" ]] && exit 0
 
   if [[ -e "$pid_file" ]] ; then
-    pid=$(cat $pid_file)
+    pid=$(cat "$pid_file")
     [[ -e "/proc/$pid" ]] && exit 0
   fi
   
@@ -45,7 +45,7 @@ main() {
 }
 
 restartService() {
-  $INIT_DIR/$service_name restart &> /dev/null
+  "$INIT_DIR/$service_name" restart &> /dev/null
   return $?
 }
 
@@ -55,4 +55,4 @@ log() {
 
 ################################################################################
 
-main $*
+main "$@"
