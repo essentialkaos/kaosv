@@ -10,3 +10,4 @@ engines:
 ratings:
    paths:
      - "SOURCES/kaosv"
+     - "SOURCES/supervisor"
