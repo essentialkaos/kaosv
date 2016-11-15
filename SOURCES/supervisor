@@ -2,47 +2,57 @@
 
 ################################################################################
 
+APP="KAOSv Supervisor"
+VER="1.1.0"
+
+INIT_DIR="/etc/init.d"
+
+################################################################################
+
 service_name=""
 
 ################################################################################
 
 main() {
-  local name="$1"
-  local pid_file="$2"
-  local lock_file="$3"
+  local name pid_file lock_file pid
 
-  [[ `id -u` != "0" ]] && exit 1
+  name="$1"
+  pid_file="$2"
+  lock_file="$3"
+
+  [[ $(id -u) != "0" ]] && exit 1
   [[ $# -ne 3 ]] && exit 2
 
   service_name="$name"
 
-  if [[ ! -e /etc/init.d/$service_name ]] ; then
-    log "Can't find init script for service."
+  if [[ ! -e "$INIT_DIR/$service_name" ]] ; then
+    log "Can't find init script for service"
     exit 3
   fi
 
-  [[ ! -e $lock_file ]] && exit 0
+  [[ ! -e "$lock_file" ]] && exit 0
 
-  if [[ -e $pid_file ]] ; then
-    local pid=`cat $pid_file`
-    [[ -e /proc/$pid ]] && exit 0
+  if [[ -e "$pid_file" ]] ; then
+    pid=$(cat $pid_file)
+    [[ -e "/proc/$pid" ]] && exit 0
   fi
   
   log "Service is dead, restarting..."
+  
   restartService
 
   exit $?
 }
 
 restartService() {
-  /etc/init.d/$service_name restart
+  $INIT_DIR/$service_name restart &> /dev/null
   return $?
 }
 
 log() {
-  echo "$@" | logger -i -t "${service_name}(kaosv-supervisor)"
+  echo "$*" | logger -i -t "${service_name}(kaosv-supervisor)"
 }
 
 ################################################################################
 
-main $@
+main $*
