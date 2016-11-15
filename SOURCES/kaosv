@@ -1208,12 +1208,6 @@ kv.warn() {
 # show "Can't do some action" $RED
 kv.show() {
   if [[ -n "$2" && -n "$COLORS_ALLOWED" ]] ; then
-    echo -e "\e["$2"m"$1"${CL_NORM}"
-  else
-    echo -e "$@"
-  fi
-
-  if [[ -n "$2" && -n "$COLORS_ALLOWED" ]] ; then
     echo -e "\e[${2}m${1}\e[0m"
   else
     echo -e "$*"
@@ -1279,7 +1273,7 @@ kv.readProperty() {
 
   [[ -z "$file" || -z "$prop" ]] && echo "" && return 1
 
-  grep -E "^([ ]{0,})${prop}" "$file" | awk -F${delm} '{print $2}' | sed 's/^ *//'
+  grep -E "^([ ]{0,})${prop}" "$file" | awk "-F${delm}" '{print $2}' | sed 's/^ *//'
 }
 
 # Add message to logfile or logger
@@ -1467,7 +1461,7 @@ kvGetUserLimit() {
         hard="${reca[3]}"
       fi
     fi
-  done < <(cat $LIMITS | tr "\t" " " | tr -s " " | grep -v "#" | grep "$user ")
+  done < <(cat "$LIMITS" | tr "\t" " " | tr -s " " | grep -v "#" | grep "$user ")
 
   [[ -n "$soft" || -n "$hard" ]] && echo "$soft:$hard"
 }
@@ -1549,8 +1543,8 @@ kvCheckPaths() {
 # Code: No
 # Echo: Owner name (String)
 kvGetOwner() {
-  [[ ! -f $1 ]] && return
-  stat -c "%U" $1
+  [[ ! -f "$1" ]] && return
+  stat -c "%U" "$1"
 }
 
 # -
@@ -1781,7 +1775,7 @@ kvExecDefHandler() {
 
   shift 2
 
-  $handler $@
+  $handler "$@"
 
   return $?
 }
@@ -1876,11 +1870,11 @@ kvUsage() {
 
   local comm_tl=0
 
-  for comm in ${kv_comm[@]} ; do
+  for comm in "${kv_comm[@]}" ; do
     comm_args="${kv_args["$comm"]}"
     comm_ctl=$((${#comm} + ${#comm_args}))
 
-    [[ $comm_ctl -gt $comm_tl ]] && comm_tl=$comm_ctl
+    [[ $comm_ctl -gt $comm_tl ]] && comm_tl="$comm_ctl"
   done
 
   comm_tl=$(($comm_tl + $HELP_SEPARATOR_LENGTH))
@@ -1907,7 +1901,7 @@ kvUsage() {
 # Code: No
 # Echo: No
 kvAppendBasicCommands() {
-  local kv_comm_old=${kv_comm[@]}
+  local kv_comm_old=${kv_comm[*]}
 
   unset kv_comm
 
@@ -1916,7 +1910,7 @@ kvAppendBasicCommands() {
   [[ -z "${kv_desc[restart]}" ]] && kv.addCommand "restart" "Restart (stop+start) ${kv[prog_name]} service"
   [[ -z "${kv_desc[status]}" ]] && kv.addCommand "status" "Show current status of ${kv[prog_name]}"
 
-  kv_comm+=(${kv_comm_old[@]})
+  kv_comm+=(${kv_comm_old})
 
   [[ -z "${kv_desc[help]}" ]] && kv.addCommand "help" "Show this information"
 }
@@ -1934,7 +1928,7 @@ kvIsFuncExist() {
 
   [[ -z "$func" ]] && return 1
 
-  declare -f $func &> /dev/null
+  declare -f "$func" &> /dev/null
 
   return $?
 }
@@ -1958,14 +1952,14 @@ kvFixProblems() {
     if [[ $status -eq $STATUS_DEAD_WITH_PID ]] ; then
       kv.showm "Removing pid file: "
 
-      rm -f ${kv[pid_file]} &> /dev/null
+      rm -f "${kv[pid_file]}" &> /dev/null
       kv.showStatusMessage $?
 
       continue
     elif [[ $status -eq $STATUS_DEAD_WITH_LOCK ]] ; then
       kv.showm "Removing lock file: "
 
-      rm -f ${kv[lock_file]} &> /dev/null
+      rm -f "${kv[lock_file]}" &> /dev/null
       kv.showStatusMessage $?
 
       continue
@@ -1975,11 +1969,11 @@ kvFixProblems() {
       local pid=$(kv.findPid)
       [[ -z "$pid" ]] && kv.showStatusMessage $ACTION_ERROR && return
 
-      echo "$pid" > ${kv[pid_file]} 2> /dev/null
+      echo "$pid" > "${kv[pid_file]}" 2> /dev/null
       [[ $? -ne 0 ]] && kv.showStatusMessage $ACTION_ERROR && return
 
       if [[ -n "${kv[user]}" ]] ; then
-        chown ${kv[user]}: ${kv[pid_file]}
+        chown "${kv[user]}:" "${kv[pid_file]}"
         kv.showStatusMessage $?
       else
         kv.showStatusMessage $ACTION_OK
@@ -1989,19 +1983,19 @@ kvFixProblems() {
     elif [[ $status -eq $STATUS_NO_LOCK ]] ; then
       kv.showm "Restoring lock file: "
 
-      touch ${kv[lock_file]} &> /dev/null
+      touch "${kv[lock_file]}" &> /dev/null
       kv.showStatusMessage $?
 
       continue
     elif [[ $status -eq $STATUS_BROKEN ]] ; then
       kv.showm "Fixing problems: "
 
-      [[ -f ${kv[pid_file]} && ! -s ${kv[pid_file]} ]] && rm -f ${kv[pid_file]} &> /dev/null
+      [[ -f "${kv[pid_file]}" && ! -s "${kv[pid_file]}" ]] && rm -f "${kv[pid_file]}" &> /dev/null
 
       local pid=$(kv.findPid)
 
-      [[ -n "$pid" ]] && echo "$pid" > ${kv[pid_file]} &> /dev/null
-      [[ -n "${kv[user]}" ]] && chown ${kv[user]}: ${kv[pid_file]} &> /dev/null
+      [[ -n "$pid" ]] && echo "$pid" > "${kv[pid_file]}" &> /dev/null
+      [[ -n "${kv[user]}" ]] && chown "${kv[user]}:" "${kv[pid_file]}" &> /dev/null
 
       kv.show "POSSIBLE FIXED" $BROWN
 
