@@ -939,7 +939,11 @@ kv.isProcExist() {
 #   kv.error "User serviceuser is not exist!"
 # fi
 kv.hasUser() {
-  [[ $(egrep "^$1:" /etc/passwd) ]] && return 0 || return 1
+  if egrep -q "^$1:" /etc/passwd ; then
+    return 0
+  fi
+
+  return 1
 }
 
 # Check that port is bound (occupied by another process)
@@ -1877,7 +1881,7 @@ kvUsage() {
     [[ $comm_ctl -gt $comm_tl ]] && comm_tl="$comm_ctl"
   done
 
-  comm_tl=$(($comm_tl + $HELP_SEPARATOR_LENGTH))
+  comm_tl=$(( comm_tl + HELP_SEPARATOR_LENGTH ))
 
   for comm in "${kv_comm[@]}" ; do
     comm_desc="${kv_desc["$comm"]}"
@@ -2039,7 +2043,7 @@ kvMkOutput() {
   [[ "${kv[output]}" == "/dev/null" ]] && return 1
   [[ -e "${kv[output]}" && -w "${kv[output]}" ]] && return 0
 
-  kv[output]=$(mktemp $TMP_TEMPLATE)
+  kv[output]=$(mktemp "$TMP_TEMPLATE")
 }
 
 # -
@@ -2056,7 +2060,7 @@ kvSendOutputToLogger() {
       cat "${kv[output]}" | logger -i -t "${kv[prog_name]}(kaosv)"
     fi
 
-    echo -n > ${kv[output]}
+    echo -n > "${kv[output]}"
   fi
 }
 
@@ -2082,7 +2086,7 @@ kvGetBootTimestamp() {
 # Code: No
 # Echo: Modification timestamp (Number)
 kvGetFileModDate() {
-  stat -c '%Y' $1 2> /dev/null
+  stat -c '%Y' "$1" 2> /dev/null
 }
 
 ###############################################################################
