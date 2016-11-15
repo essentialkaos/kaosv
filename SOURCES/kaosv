@@ -334,7 +334,7 @@ kv.go() {
     kv.log "${kv[real_user]} executed command $comm."
   fi
 
-  $comm_handler $@
+  $comm_handler "$@"
 
   kv.exit $?
 }
@@ -447,7 +447,7 @@ kv.addCommandArgs() {
 
   local arg args
 
-  for arg in $@ ; do
+  for arg in "$@" ; do
     vars="$args $arg"
   done
 
@@ -458,7 +458,7 @@ kv.addCommandArgs() {
 # Alias for kv.addCommandArgs for compatibility with
 # earlier versions
 kv.addCommandVars() {
-  kv.addCommandArgs $@
+  kv.addCommandArgs "$@"
   return $?
 }
 
@@ -487,20 +487,22 @@ kv.disableOutputRedirect() {
 # Code: No
 # Echo: No
 kv.readSysconfig() {
-  local conf="${1:-${kv[prog_name]}}"
-  local strict="$2"
+  local conf strict
+
+  conf="${1:-${kv[prog_name]}}"
+  strict="$2"
 
   if [[ -n "$strict" ]] ; then
     [[ -z "$conf" ]] && kv.error "Can't read sysconfig file - config name is not defined." && return 1
 
-    [[ ! -f $SYSCONFIG_DIR/$conf ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> is not exist." && return 1
-    [[ ! -r $SYSCONFIG_DIR/$conf ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> is not readable." && return 1
+    [[ ! -f "$SYSCONFIG_DIR/$conf" ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> is not exist." && return 1
+    [[ ! -r "$SYSCONFIG_DIR/$conf" ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> is not readable." && return 1
   fi
 
   [[ ! -r $SYSCONFIG_DIR/$conf ]] && return 0
 
-  local ar=$(stat -c "%A" $SYSCONFIG_DIR/$conf)
-  local oi=$(stat -c "%U" $SYSCONFIG_DIR/$conf)
+  local ar=$(stat -c "%A" "$SYSCONFIG_DIR/$conf")
+  local oi=$(stat -c "%U" "$SYSCONFIG_DIR/$conf")
 
   if [[ "${ar:8:1}" != "-" ]] ; then
     kv.error "Can't read sysconfig file - unsecure access rights." && return 1
@@ -510,7 +512,7 @@ kv.readSysconfig() {
     kv.error "Can't read sysconfig file - owner is not root." && return 1
   fi
 
-  source $SYSCONFIG_DIR/$conf
+  source "$SYSCONFIG_DIR/$conf"
 }
 
 # Exec command
@@ -535,7 +537,7 @@ kv.run() {
 
   [[ -z "$cmd_user" ]] && cmd_user="root"
 
-  kv.runAs "$cmd_user" $@
+  kv.runAs "$cmd_user" "$@"
 
   return $?
 }
@@ -565,7 +567,7 @@ kv.runAs() {
 
   if [[ -n "$cmd_user" ]] ; then
     if ! kv.hasUser "$cmd_user" ; then
-      echo "Can't execute command - user $cmd_user is not exist on the system." >> ${kv[output]}
+      echo "Can't execute command - user $cmd_user is not exist on the system." >> "${kv[output]}"
       return $ACTION_ERROR
     fi
   fi
@@ -578,9 +580,9 @@ kv.runAs() {
   local args="$*"
 
   if [[ "$cmd_user" == "root" ]] ; then
-    $cl_nice /bin/bash -c "$cl_limit; $args" &>> ${kv[output]}
+    $cl_nice /bin/bash -c "$cl_limit; $args" &>> "${kv[output]}"
   else
-    $cl_nice runuser -s /bin/bash $cmd_user -c "$cl_limit; $args" &>> ${kv[output]}
+    $cl_nice runuser -s /bin/bash "$cmd_user" -c "$cl_limit; $args" &>> "${kv[output]}"
   fi
 
   return $?
@@ -623,7 +625,7 @@ kv.daemonize() {
   cl_limit=$(kvGetLimitsCmd)
   cl_nice=$(kvGetNicesCmd)
 
-  /bin/bash -c "$cl_limit; $cl_nice daemonize $args" &>> ${kv[output]}
+  /bin/bash -c "$cl_limit; $cl_nice daemonize $args" &>> "${kv[output]}"
 
   return $?
 }
@@ -635,7 +637,7 @@ kv.daemonize() {
 # Code: Return code (Boolean)
 # Echo: No
 kv.start() {
-  kvStart $@
+  kvStart "$@"
   return $?
 }
 
@@ -646,7 +648,7 @@ kv.start() {
 # Code: Return code (Boolean)
 # Echo: No
 kv.stop() {
-  kvStop $@
+  kvStop "$@"
   return $?
 }
 
@@ -657,7 +659,7 @@ kv.stop() {
 # Code: Return code (Boolean)
 # Echo: No
 kv.restart() {
-  kvRestart $@
+  kvRestart "$@"
   return $?
 }
 
@@ -668,7 +670,7 @@ kv.restart() {
 # Code: Return code (Boolean)
 # Echo: No
 kv.status() {
-  kvStatus $@
+  kvStatus "$@"
   return $?
 }
 
@@ -679,7 +681,7 @@ kv.status() {
 # Code: Return code (Boolean)
 # Echo: No
 kv.usage() {
-  kvUsage $@
+  kvUsage "$@"
   return $?
 }
 
@@ -701,8 +703,10 @@ kv.requireRoot() {
 # Code: Boolean
 # Echo: No
 kv.statusIs() {
-  local nstatus="$1"
-  local cstatus=$(kv.getStatus)
+  local nstatus cstatus
+
+  nstatus="$1"
+  cstatus=$(kv.getStatus)
 
   [[ "$cstatus" == "$nstatus" ]] && return 0 || return 1
 }
@@ -712,15 +716,17 @@ kv.statusIs() {
 # Code: No
 # Echo: Status code (Number)
 kv.getStatus() {
-  if [[ -f ${kv[pid_file]} && -r ${kv[pid_file]} ]] ; then
-    local pid_file_mod=$(kvGetFileModDate "${kv[pid_file]}")
-    local boot_date=$(kvGetBootTimestamp)
+  local pid_file_mod boot_date pid
+
+  if [[ -f "${kv[pid_file]}" && -r "${kv[pid_file]}" ]] ; then
+    pid_file_mod=$(kvGetFileModDate "${kv[pid_file]}")
+    boot_date=$(kvGetBootTimestamp)
 
     if [[ $boot_date -gt $pid_file_mod ]] ; then
       echo $STATUS_DEAD_WITH_PID && return
     fi
 
-    local pid=$(kv.getPid)
+    pid=$(kv.getPid)
 
     [[ -z "$pid" ]] && echo $STATUS_BROKEN && return
 
@@ -734,7 +740,7 @@ kv.getStatus() {
       echo $STATUS_DEAD_WITH_PID && return
     fi
   else
-    local pid=$(kv.findPid)
+    pid=$(kv.findPid)
 
     if [[ -n "$pid" ]] ; then
       if [[ ! -f ${kv[pid_file]} ]] ; then
@@ -761,8 +767,8 @@ kv.getStatus() {
 # local pid=$(kv.getPid)
 # kv.sendSignal $pid
 kv.getPid() {
-  if [[ -f ${kv[pid_file]} && -r ${kv[pid_file]} ]] ; then
-    cat ${kv[pid_file]}
+  if [[ -f "${kv[pid_file]}" && -r "${kv[pid_file]}" ]] ; then
+    cat "${kv[pid_file]}"
   else
     kv.findPid
   fi
