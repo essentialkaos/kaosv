@@ -6,14 +6,14 @@
 #
 
 if [[ "$BASH" == "/bin/sh" ]] ; then
-  bash $0 $@
+  bash "$0" "$@"
   exit $?
 fi
 
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.10.0"
+KV_VERSION="2.10.1"
 
 ###############################################################################
 
@@ -334,7 +334,7 @@ kv.go() {
     kv.log "${kv[real_user]} executed command $comm."
   fi
 
-  $comm_handler $@
+  $comm_handler "$@"
 
   kv.exit $?
 }
@@ -447,7 +447,7 @@ kv.addCommandArgs() {
 
   local arg args
 
-  for arg in $@ ; do
+  for arg in "$@" ; do
     vars="$args $arg"
   done
 
@@ -458,7 +458,7 @@ kv.addCommandArgs() {
 # Alias for kv.addCommandArgs for compatibility with
 # earlier versions
 kv.addCommandVars() {
-  kv.addCommandArgs $@
+  kv.addCommandArgs "$@"
   return $?
 }
 
@@ -487,20 +487,24 @@ kv.disableOutputRedirect() {
 # Code: No
 # Echo: No
 kv.readSysconfig() {
-  local conf="${1:-${kv[prog_name]}}"
-  local strict="$2"
+  local conf strict
+
+  conf="${1:-${kv[prog_name]}}"
+  strict="$2"
 
   if [[ -n "$strict" ]] ; then
     [[ -z "$conf" ]] && kv.error "Can't read sysconfig file - config name is not defined." && return 1
 
-    [[ ! -f $SYSCONFIG_DIR/$conf ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> is not exist." && return 1
-    [[ ! -r $SYSCONFIG_DIR/$conf ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> is not readable." && return 1
+    [[ ! -f "$SYSCONFIG_DIR/$conf" ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> is not exist." && return 1
+    [[ ! -r "$SYSCONFIG_DIR/$conf" ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> is not readable." && return 1
   fi
 
   [[ ! -r $SYSCONFIG_DIR/$conf ]] && return 0
 
-  local ar=$(stat -c "%A" $SYSCONFIG_DIR/$conf)
-  local oi=$(stat -c "%U" $SYSCONFIG_DIR/$conf)
+  local ar oi
+
+  ar=$(stat -c "%A" "$SYSCONFIG_DIR/$conf")
+  oi=$(stat -c "%U" "$SYSCONFIG_DIR/$conf")
 
   if [[ "${ar:8:1}" != "-" ]] ; then
     kv.error "Can't read sysconfig file - unsecure access rights." && return 1
@@ -510,7 +514,7 @@ kv.readSysconfig() {
     kv.error "Can't read sysconfig file - owner is not root." && return 1
   fi
 
-  source $SYSCONFIG_DIR/$conf
+  source "$SYSCONFIG_DIR/$conf"
 }
 
 # Exec command
@@ -535,7 +539,7 @@ kv.run() {
 
   [[ -z "$cmd_user" ]] && cmd_user="root"
 
-  kv.runAs "$cmd_user" $@
+  kv.runAs "$cmd_user" "$@"
 
   return $?
 }
@@ -565,7 +569,7 @@ kv.runAs() {
 
   if [[ -n "$cmd_user" ]] ; then
     if ! kv.hasUser "$cmd_user" ; then
-      echo "Can't execute command - user $cmd_user is not exist on the system." >> ${kv[output]}
+      echo "Can't execute command - user $cmd_user is not exist on the system." >> "${kv[output]}"
       return $ACTION_ERROR
     fi
   fi
@@ -578,9 +582,9 @@ kv.runAs() {
   local args="$*"
 
   if [[ "$cmd_user" == "root" ]] ; then
-    $cl_nice /bin/bash -c "$cl_limit; $args" &>> ${kv[output]}
+    $cl_nice /bin/bash -c "$cl_limit; $args" &>> "${kv[output]}"
   else
-    $cl_nice runuser -s /bin/bash $cmd_user -c "$cl_limit; $args" &>> ${kv[output]}
+    $cl_nice runuser -s /bin/bash "$cmd_user" -c "$cl_limit; $args" &>> "${kv[output]}"
   fi
 
   return $?
@@ -623,7 +627,7 @@ kv.daemonize() {
   cl_limit=$(kvGetLimitsCmd)
   cl_nice=$(kvGetNicesCmd)
 
-  /bin/bash -c "$cl_limit; $cl_nice daemonize $args" &>> ${kv[output]}
+  /bin/bash -c "$cl_limit; $cl_nice daemonize $args" &>> "${kv[output]}"
 
   return $?
 }
@@ -635,7 +639,7 @@ kv.daemonize() {
 # Code: Return code (Boolean)
 # Echo: No
 kv.start() {
-  kvStart $@
+  kvStart "$@"
   return $?
 }
 
@@ -646,7 +650,7 @@ kv.start() {
 # Code: Return code (Boolean)
 # Echo: No
 kv.stop() {
-  kvStop $@
+  kvStop "$@"
   return $?
 }
 
@@ -657,7 +661,7 @@ kv.stop() {
 # Code: Return code (Boolean)
 # Echo: No
 kv.restart() {
-  kvRestart $@
+  kvRestart "$@"
   return $?
 }
 
@@ -668,7 +672,7 @@ kv.restart() {
 # Code: Return code (Boolean)
 # Echo: No
 kv.status() {
-  kvStatus $@
+  kvStatus "$@"
   return $?
 }
 
@@ -679,7 +683,7 @@ kv.status() {
 # Code: Return code (Boolean)
 # Echo: No
 kv.usage() {
-  kvUsage $@
+  kvUsage "$@"
   return $?
 }
 
@@ -701,8 +705,10 @@ kv.requireRoot() {
 # Code: Boolean
 # Echo: No
 kv.statusIs() {
-  local nstatus="$1"
-  local cstatus=$(kv.getStatus)
+  local nstatus cstatus
+
+  nstatus="$1"
+  cstatus=$(kv.getStatus)
 
   [[ "$cstatus" == "$nstatus" ]] && return 0 || return 1
 }
@@ -712,15 +718,17 @@ kv.statusIs() {
 # Code: No
 # Echo: Status code (Number)
 kv.getStatus() {
-  if [[ -f ${kv[pid_file]} && -r ${kv[pid_file]} ]] ; then
-    local pid_file_mod=$(kvGetFileModDate "${kv[pid_file]}")
-    local boot_date=$(kvGetBootTimestamp)
+  local pid_file_mod boot_date pid
+
+  if [[ -f "${kv[pid_file]}" && -r "${kv[pid_file]}" ]] ; then
+    pid_file_mod=$(kvGetFileModDate "${kv[pid_file]}")
+    boot_date=$(kvGetBootTimestamp)
 
     if [[ $boot_date -gt $pid_file_mod ]] ; then
       echo $STATUS_DEAD_WITH_PID && return
     fi
 
-    local pid=$(kv.getPid)
+    pid=$(kv.getPid)
 
     [[ -z "$pid" ]] && echo $STATUS_BROKEN && return
 
@@ -734,7 +742,7 @@ kv.getStatus() {
       echo $STATUS_DEAD_WITH_PID && return
     fi
   else
-    local pid=$(kv.findPid)
+    pid=$(kv.findPid)
 
     if [[ -n "$pid" ]] ; then
       if [[ ! -f ${kv[pid_file]} ]] ; then
@@ -761,8 +769,8 @@ kv.getStatus() {
 # local pid=$(kv.getPid)
 # kv.sendSignal $pid
 kv.getPid() {
-  if [[ -f ${kv[pid_file]} && -r ${kv[pid_file]} ]] ; then
-    cat ${kv[pid_file]}
+  if [[ -f "${kv[pid_file]}" && -r "${kv[pid_file]}" ]] ; then
+    cat "${kv[pid_file]}"
   else
     kv.findPid
   fi
@@ -816,7 +824,7 @@ kv.showStatusMessage() {
     $ACTION_FORCED) kv.show "${CL_BROWN}FORCED${CL_NORM}" ;;
   esac
 
-  return $1
+  return "$1"
 }
 
 # Get status of starting service
@@ -837,11 +845,11 @@ kv.getStartStatus() {
 
   local i
 
-  for i in $(seq 1 ${kv[delay_start]:-15}) ; do
+  for i in $(seq 1 "${kv[delay_start]:-15}") ; do
     if [[ -f $cpid_file && -r $cpid_file ]] ; then
       [[ -n "$no_check_proc" ]] && return $ACTION_OK
 
-      local pid=$(head -1 $cpid_file)
+      local pid=$(head -1 "$cpid_file")
 
       if kv.isProcExist "$pid" ; then
         return $ACTION_OK
@@ -875,7 +883,7 @@ kv.getStopStatus() {
 
   local i
 
-  for i in $(seq 1 ${kv[delay_stop]:-30}) ; do
+  for i in $(seq 1 "${kv[delay_stop]:-30}") ; do
     if ! kv.isProcExist "$pid" ; then
       return $ACTION_OK
     fi
@@ -898,7 +906,7 @@ kv.killProcess() {
   [[ -z "$pid" ]] && pid=$(kv.findPid)
   [[ -z "$pid" ]] && return 1
 
-  kill -KILL $pid >/dev/null 2>&1
+  kill -KILL "$pid" >/dev/null 2>&1
 
   kv.removeLock
   kv.removePid
@@ -931,7 +939,11 @@ kv.isProcExist() {
 #   kv.error "User serviceuser is not exist!"
 # fi
 kv.hasUser() {
-  [[ $(egrep "^$1:" /etc/passwd) ]] && return 0 || return 1
+  if egrep -q "^$1:" /etc/passwd ; then
+    return 0
+  fi
+
+  return 1
 }
 
 # Check that port is bound (occupied by another process)
@@ -991,8 +1003,8 @@ kv.isServiceWorks() {
 kv.isInstalled() {
   local app
 
-  for app in $@ ; do
-    type -p $app &> /dev/null
+  for app in "$@" ; do
+    type -p "$app" &> /dev/null
     [[ $? -ne 0 ]] && return 1
   done
 
@@ -1019,7 +1031,7 @@ kv.sendSignal() {
   [[ -n "$2" ]] && local pid="$2" || local pid=$(kv.getPid)
   [[ -z "$pid" || -z "$signal" ]] && return 1
 
-  kill -${signal} $pid >/dev/null 2>&1
+  kill "-${signal}" "$pid" >/dev/null 2>&1
 }
 
 # Set the adjustment level for the Out of memory (OOM) killer
@@ -1041,7 +1053,7 @@ kv.setOOMScoreAdj() {
   [[ -z "$pid" ]] && pid=$(kv.getPid)
   [[ -z "$pid" ]] && return 1
 
-  echo "$adj" > /proc/$pid/oom_score_adj
+  echo "$adj" > "/proc/$pid/oom_score_adj"
 }
 
 # Check SE Linux
@@ -1079,7 +1091,7 @@ kv.isRoot() {
 # Code: No
 # Echo: No
 kv.createLock() {
-  touch ${kv[lock_file]} &> /dev/null
+  touch "${kv[lock_file]}" &> /dev/null
 }
 
 # Remove lock file
@@ -1087,7 +1099,7 @@ kv.createLock() {
 # Code: No
 # Echo: No
 kv.removeLock() {
-  rm -rf ${kv[lock_file]} &> /dev/null
+  rm -rf "${kv[lock_file]}" &> /dev/null
 }
 
 # Return 0 if lock file exist
@@ -1100,7 +1112,7 @@ kv.removeLock() {
 #   echo "Lock file exist!"
 # fi
 kv.hasLock() {
-  [[ -f ${kv[lock_file]} ]] && return 1 || return 0
+  [[ -f "${kv[lock_file]}" ]] && return 1 || return 0
 }
 
 # Create pid file
@@ -1113,7 +1125,7 @@ kv.hasLock() {
 # Example:
 # kv.createPid 12345
 kv.createPid() {
-  echo "$1" > ${kv[pid_file]}
+  echo "$1" > "${kv[pid_file]}"
 }
 
 # Remove pid file
@@ -1121,7 +1133,7 @@ kv.createPid() {
 # Code: No
 # Echo: No
 kv.removePid() {
-  rm -f ${kv[pid_file]} &> /dev/null
+  rm -f "${kv[pid_file]}" &> /dev/null
 }
 
 # Exit from the script
@@ -1137,9 +1149,9 @@ kv.removePid() {
 kv.exit() {
   kvSendOutputToLogger
 
-  rm -f ${TMP_TEMPLATE//X/}* &> /dev/null
+  rm -f "${TMP_TEMPLATE//X/}*" &> /dev/null
 
-  exit ${1:-0}
+  exit "${1:-0}"
 }
 
 ###############################################################################
@@ -1171,7 +1183,7 @@ kv.error() {
   kv.show "$1" $RED
 
   if [[ -n "$2" ]] ; then
-    kv.exit ${2:-1}
+    kv.exit "${2:-1}"
   fi
 }
 
@@ -1200,9 +1212,9 @@ kv.warn() {
 # show "Can't do some action" $RED
 kv.show() {
   if [[ -n "$2" && -n "$COLORS_ALLOWED" ]] ; then
-    echo -e "\e["$2"m"$1"${CL_NORM}"
+    echo -e "\e[${2}m${1}\e[0m"
   else
-    echo -e "$@"
+    echo -e "$*"
   fi
 }
 
@@ -1214,15 +1226,11 @@ kv.show() {
 # Code: No
 # Echo: No
 kv.showm() {
-  local message
-
   if [[ -n "$2" && -n "$COLORS_ALLOWED" ]] ; then
-    message=$(echo "\e["$2"m"$1"${CL_NORM}")
+    echo -e -n "\e[${2}m${1}\e[0m"
   else
-    message="$@"
+    echo -e -n "$*"
   fi
-
-  printf "$message"
 }
 
 # Show version of kaosv
@@ -1245,8 +1253,8 @@ kv.version() {
 kv.restoreSEContext() {
   local target
 
-  for target in $@ ; do
-    [[ -x /sbin/restorecon ]] && /sbin/restorecon $target
+  for target in "$@" ; do
+    [[ -x /sbin/restorecon ]] && /sbin/restorecon "$target"
   done
 }
 
@@ -1269,7 +1277,7 @@ kv.readProperty() {
 
   [[ -z "$file" || -z "$prop" ]] && echo "" && return 1
 
-  grep -E "^([ ]{0,})${prop}" "$file" | awk -F${delm} '{print $2}' | sed 's/^ *//'
+  grep -E "^([ ]{0,})${prop}" "$file" | awk "-F${delm}" '{print $2}' | sed 's/^ *//'
 }
 
 # Add message to logfile or logger
@@ -1282,10 +1290,10 @@ kv.readProperty() {
 # Example:
 # kv.log "My very important message"
 kv.log() {
-  local message="$@"
+  local message="$*"
 
   if [[ -n "${kv[log]}" ]] ; then
-    echo "$message" >> ${kv[log]}
+    echo "$message" >> "${kv[log]}"
   else
     echo "$message" | logger -i -t "${kv[prog_name]}(kaosv)"
   fi
@@ -1338,27 +1346,27 @@ kvPrepare() {
     fi
   fi
 
-  [[ -z "${kv[pid_file]}" ]] && kv[pid_file]=${kv[pid_dir]}/${kv[script]}.pid
-  [[ -z "${kv[lock_file]}" ]] && kv[lock_file]=${kv[lock_dir]}/${kv[script]}
+  [[ -z "${kv[pid_file]}" ]] && kv[pid_file]="${kv[pid_dir]}/${kv[script]}.pid"
+  [[ -z "${kv[lock_file]}" ]] && kv[lock_file]="${kv[lock_dir]}/${kv[script]}"
 
   if [[ -n "${kv[log]}" ]] ; then
-    local log_dir=$(dirname ${kv[log]})
+    local log_dir=$(dirname "${kv[log]}")
 
     if ! kvIsWellPath "$log_dir" ; then
       kv.error "Can't execute this init script. Property log contains wrong path (${kv[log]})." $ACTION_ERROR
     fi
 
-    if [[ ! -d $log_dir ]] ; then
+    if [[ ! -d "$log_dir" ]] ; then
       kv.error "Log file directory <$log_dir> is not exist." $ACTION_ERROR
     fi
 
-    if [[ -f ${kv[log]} && ! -w ${kv[log]} ]] ; then
+    if [[ -f "${kv[log]}" && ! -w "${kv[log]}" ]] ; then
       kv.error "Log file is not writable." $ACTION_ERROR
     fi
   fi
 
-  kv[pid_dir]=$(dirname ${kv[pid_file]})
-  kv[lock_dir]=$(dirname ${kv[lock_file]})
+  kv[pid_dir]=$(dirname "${kv[pid_file]}")
+  kv[lock_dir]=$(dirname "${kv[lock_file]}")
 
   if ! kvIsWellPath "${kv[pid_dir]}" ; then
     kv.error "Can't use pid dir <${kv[pid_dir]}>." $ACTION_ERROR
@@ -1457,7 +1465,7 @@ kvGetUserLimit() {
         hard="${reca[3]}"
       fi
     fi
-  done < <(cat $LIMITS | tr "\t" " " | tr -s " " | grep -v "#" | grep "$user ")
+  done < <(cat "$LIMITS" | tr "\t" " " | tr -s " " | grep -v "#" | grep "$user ")
 
   [[ -n "$soft" || -n "$hard" ]] && echo "$soft:$hard"
 }
@@ -1488,7 +1496,7 @@ kvGetNicesCmd() {
 
   fi
 
-  echo $result
+  echo "$result"
 }
 
 # -
@@ -1500,7 +1508,7 @@ kvGetNicesCmd() {
 kvCheckPaths() {
   if [[ ! -e ${kv[pid_dir]} ]] ; then
     if kv.isRoot ; then
-      mkdir -p ${kv[pid_dir]} &> /dev/null
+      mkdir -p "${kv[pid_dir]}" &> /dev/null
     fi
   fi
 
@@ -1511,21 +1519,21 @@ kvCheckPaths() {
           kv.error "Can't change owner for pid directory <${kv[pid_dir]}> - user <${kv[user]}> not exist on system." $ACTION_ERROR
         fi
 
-        chown ${kv[user]} ${kv[pid_dir]}
+        chown "${kv[user]}" "${kv[pid_dir]}"
       fi
     fi
   fi
 
-  if [[ ! -e ${kv[lock_dir]} ]] ; then
+  if [[ ! -e "${kv[lock_dir]}" ]] ; then
     if kv.isRoot ; then
-      mkdir -p ${kv[lock_dir]} &> /dev/null
+      mkdir -p "${kv[lock_dir]}" &> /dev/null
     fi
   fi
 
-  if [[ ! -w ${kv[lock_dir]} ]] ; then
+  if [[ ! -w "${kv[lock_dir]}" ]] ; then
     kv.error "Lock dir <${kv[lock_dir]}> is not writable." $ACTION_ERROR
   fi
-   if [[ ! -w ${kv[pid_dir]} ]] ; then
+   if [[ ! -w "${kv[pid_dir]}" ]] ; then
     kv.error "Pid dir <${kv[pid_dir]}> is not writable." $ACTION_ERROR
   fi
 }
@@ -1539,8 +1547,8 @@ kvCheckPaths() {
 # Code: No
 # Echo: Owner name (String)
 kvGetOwner() {
-  [[ ! -f $1 ]] && return
-  stat -c "%U" $1
+  [[ ! -f "$1" ]] && return
+  stat -c "%U" "$1"
 }
 
 # -
@@ -1600,9 +1608,9 @@ kvStart() {
   kvFixIfNotInStatus $STATUS_STOPPED
 
   if [[ -n "${kv_dout[start_pre]}" ]] ; then
-    kvExecDefHandler "start" "pre" $@
+    kvExecDefHandler "start" "pre" "$@"
   else
-    kvExecDefHandler "start" "pre" $@ &>> ${kv[output]}
+    kvExecDefHandler "start" "pre" "$@" &>> "${kv[output]}"
   fi
 
   retcode=$?
@@ -1610,14 +1618,14 @@ kvStart() {
   [[ $retcode -ne 0 ]] && return $retcode
 
   kv.showProcessMessage "Starting ${kv[prog_name]}"
-  kvExecDefHandler "start" "" $@ &>> ${kv[output]}
+  kvExecDefHandler "start" "" "$@" &>> "${kv[output]}"
   retcode=$?
   kv.showStatusMessage "$retcode"
 
   if [[ ${kv_dout[start_post]} ]] ; then
-    kvExecDefHandler "start" "post" $@
+    kvExecDefHandler "start" "post" "$@"
   else
-    kvExecDefHandler "start" "post" $@ &>> ${kv[output]}
+    kvExecDefHandler "start" "post" "$@" &>> "${kv[output]}"
   fi
 
   [[ $? -ne $retcode && $retcode -eq 0 ]] && retcode=$?
@@ -1662,9 +1670,9 @@ kvStop() {
   kvFixIfNotInStatus $STATUS_WORKS
 
   if [[ -n "${kv_dout[stop_pre]}" ]] ; then
-    kvExecDefHandler "stop" "pre" $@
+    kvExecDefHandler "stop" "pre" "$@"
   else
-    kvExecDefHandler "stop" "pre" $@ &>> ${kv[output]}
+    kvExecDefHandler "stop" "pre" "$@" &>> "${kv[output]}"
   fi
 
   retcode=$?
@@ -1674,14 +1682,14 @@ kvStop() {
   kv_pid=$(kv.getPid)
 
   kv.showProcessMessage "Stopping ${kv[prog_name]}"
-  kvExecDefHandler "stop" "" $@ &>> ${kv[output]}
+  kvExecDefHandler "stop" "" "$@" &>> "${kv[output]}"
   retcode=$?
   kv.showStatusMessage "$retcode"
 
   if [[ -n "${kv_dout[stop_post]}" ]] ; then
-    kvExecDefHandler "stop" "post" $@
+    kvExecDefHandler "stop" "post" "$@"
   else
-    kvExecDefHandler "stop" "post" $@ &>> ${kv[output]}
+    kvExecDefHandler "stop" "post" "$@" &>> "${kv[output]}"
   fi
 
   [[ $? -ne $retcode && $retcode -eq 0 ]] && retcode=$?
@@ -1716,27 +1724,27 @@ kvRestart() {
   kvCheckPaths
 
   if [[ -n "${kv_dout[restart_pre]}" ]] ; then
-    kvExecDefHandler "restart" "pre" $@
+    kvExecDefHandler "restart" "pre" "$@"
   else
-    kvExecDefHandler "restart" "pre" $@ &>> ${kv[output]}
+    kvExecDefHandler "restart" "pre" "$@" &>> "${kv[output]}"
   fi
 
-  kvExecDefHandler "restart" "" $@ &>> ${kv[output]}
+  kvExecDefHandler "restart" "" "$@" &>> "${kv[output]}"
 
   [[ $? -ne 0 ]] && return $ACTION_ERROR
 
   kvStop
 
-  [[ ${kv[delay_restart]} -ne 0 ]] && sleep ${kv[delay_restart]}
+  [[ ${kv[delay_restart]} -ne 0 ]] && sleep "${kv[delay_restart]}"
 
   kvStart
 
   [[ $? -ne 0 ]] && return $ACTION_ERROR
 
   if [[ -n "${kv_dout[restart_post]}" ]] ; then
-    kvExecDefHandler "restart" "post" $@
+    kvExecDefHandler "restart" "post" "$@"
   else
-    kvExecDefHandler "restart" "post" $@ &>> ${kv[output]}
+    kvExecDefHandler "restart" "post" "$@" &>> "${kv[output]}"
   fi
 }
 
@@ -1771,7 +1779,7 @@ kvExecDefHandler() {
 
   shift 2
 
-  $handler $@
+  $handler "$@"
 
   return $?
 }
@@ -1866,22 +1874,22 @@ kvUsage() {
 
   local comm_tl=0
 
-  for comm in ${kv_comm[@]} ; do
+  for comm in "${kv_comm[@]}" ; do
     comm_args="${kv_args["$comm"]}"
     comm_ctl=$((${#comm} + ${#comm_args}))
 
-    [[ $comm_ctl -gt $comm_tl ]] && comm_tl=$comm_ctl
+    [[ $comm_ctl -gt $comm_tl ]] && comm_tl="$comm_ctl"
   done
 
-  comm_tl=$(($comm_tl + $HELP_SEPARATOR_LENGTH))
+  comm_tl=$(( comm_tl + HELP_SEPARATOR_LENGTH ))
 
-  for comm in ${kv_comm[@]} ; do
+  for comm in "${kv_comm[@]}" ; do
     comm_desc="${kv_desc["$comm"]}"
     comm_args="${kv_args["$comm"]}"
 
     if [[ -n "$comm_args" ]] ; then
       local comm_tld=$(($comm_tl - ${#comm} - 1))
-      printf "  ${CL_GREEN}%-${#comm}s${CL_NORM} ${CL_DARK}%-${comm_tld}s${CL_NORM} %s\n" "$comm" "$comm_args" "$comm_desc"
+      printf "  ${CL_GREEN}%-${#comm}s${CL_NORM} ${CL_GREY}%-${comm_tld}s${CL_NORM} %s\n" "$comm" "$comm_args" "$comm_desc"
     else
       printf "  ${CL_GREEN}%-${comm_tl}s${CL_NORM} %s\n" "$comm" "$comm_desc"
     fi
@@ -1897,7 +1905,7 @@ kvUsage() {
 # Code: No
 # Echo: No
 kvAppendBasicCommands() {
-  local kv_comm_old=${kv_comm[@]}
+  local kv_comm_old=${kv_comm[*]}
 
   unset kv_comm
 
@@ -1906,7 +1914,7 @@ kvAppendBasicCommands() {
   [[ -z "${kv_desc[restart]}" ]] && kv.addCommand "restart" "Restart (stop+start) ${kv[prog_name]} service"
   [[ -z "${kv_desc[status]}" ]] && kv.addCommand "status" "Show current status of ${kv[prog_name]}"
 
-  kv_comm+=(${kv_comm_old[@]})
+  kv_comm+=(${kv_comm_old})
 
   [[ -z "${kv_desc[help]}" ]] && kv.addCommand "help" "Show this information"
 }
@@ -1924,7 +1932,7 @@ kvIsFuncExist() {
 
   [[ -z "$func" ]] && return 1
 
-  declare -f $func &> /dev/null
+  declare -f "$func" &> /dev/null
 
   return $?
 }
@@ -1948,14 +1956,14 @@ kvFixProblems() {
     if [[ $status -eq $STATUS_DEAD_WITH_PID ]] ; then
       kv.showm "Removing pid file: "
 
-      rm -f ${kv[pid_file]} &> /dev/null
+      rm -f "${kv[pid_file]}" &> /dev/null
       kv.showStatusMessage $?
 
       continue
     elif [[ $status -eq $STATUS_DEAD_WITH_LOCK ]] ; then
       kv.showm "Removing lock file: "
 
-      rm -f ${kv[lock_file]} &> /dev/null
+      rm -f "${kv[lock_file]}" &> /dev/null
       kv.showStatusMessage $?
 
       continue
@@ -1965,11 +1973,11 @@ kvFixProblems() {
       local pid=$(kv.findPid)
       [[ -z "$pid" ]] && kv.showStatusMessage $ACTION_ERROR && return
 
-      echo "$pid" > ${kv[pid_file]} 2> /dev/null
+      echo "$pid" > "${kv[pid_file]}" 2> /dev/null
       [[ $? -ne 0 ]] && kv.showStatusMessage $ACTION_ERROR && return
 
       if [[ -n "${kv[user]}" ]] ; then
-        chown ${kv[user]}: ${kv[pid_file]}
+        chown "${kv[user]}:" "${kv[pid_file]}"
         kv.showStatusMessage $?
       else
         kv.showStatusMessage $ACTION_OK
@@ -1979,19 +1987,19 @@ kvFixProblems() {
     elif [[ $status -eq $STATUS_NO_LOCK ]] ; then
       kv.showm "Restoring lock file: "
 
-      touch ${kv[lock_file]} &> /dev/null
+      touch "${kv[lock_file]}" &> /dev/null
       kv.showStatusMessage $?
 
       continue
     elif [[ $status -eq $STATUS_BROKEN ]] ; then
       kv.showm "Fixing problems: "
 
-      [[ -f ${kv[pid_file]} && ! -s ${kv[pid_file]} ]] && rm -f ${kv[pid_file]} &> /dev/null
+      [[ -f "${kv[pid_file]}" && ! -s "${kv[pid_file]}" ]] && rm -f "${kv[pid_file]}" &> /dev/null
 
       local pid=$(kv.findPid)
 
-      [[ -n "$pid" ]] && echo "$pid" > ${kv[pid_file]} &> /dev/null
-      [[ -n "${kv[user]}" ]] && chown ${kv[user]}: ${kv[pid_file]} &> /dev/null
+      [[ -n "$pid" ]] && echo "$pid" > "${kv[pid_file]}" &> /dev/null
+      [[ -n "${kv[user]}" ]] && chown "${kv[user]}:" "${kv[pid_file]}" &> /dev/null
 
       kv.show "POSSIBLE FIXED" $BROWN
 
@@ -2009,8 +2017,8 @@ kvFixProblems() {
 # Code: No
 # Echo: No
 kvExportSupervisorCron() {
-  echo "* * * * * root $SUPERVISOR ${kv[prog_name]} ${kv[pid_file]} ${kv[lock_file]}" > $CRON_DIR/${kv[prog_name]}-supervisor
-  chmod 644 $CRON_DIR/${kv[prog_name]}-supervisor
+  echo "* * * * * root $SUPERVISOR ${kv[prog_name]} ${kv[pid_file]} ${kv[lock_file]}" > "$CRON_DIR/${kv[prog_name]}-supervisor"
+  chmod 644 "$CRON_DIR/${kv[prog_name]}-supervisor"
 }
 
 # -
@@ -2020,8 +2028,8 @@ kvExportSupervisorCron() {
 # Code: No
 # Echo: No
 kvRemoveSupervisorCron() {
-  if [[ -e $CRON_DIR/${kv[prog_name]}-supervisor ]] ; then
-    rm -f $CRON_DIR/${kv[prog_name]}-supervisor
+  if [[ -e "$CRON_DIR/${kv[prog_name]}-supervisor" ]] ; then
+    rm -f "$CRON_DIR/${kv[prog_name]}-supervisor"
   fi
 }
 
@@ -2033,9 +2041,9 @@ kvRemoveSupervisorCron() {
 # Echo: No
 kvMkOutput() {
   [[ "${kv[output]}" == "/dev/null" ]] && return 1
-  [[ -e ${kv[output]} && -w ${kv[output]} ]] && return 0
+  [[ -e "${kv[output]}" && -w "${kv[output]}" ]] && return 0
 
-  kv[output]=$(mktemp $TMP_TEMPLATE)
+  kv[output]=$(mktemp "$TMP_TEMPLATE")
 }
 
 # -
@@ -2047,12 +2055,12 @@ kvMkOutput() {
 kvSendOutputToLogger() {
   if [[ -s ${kv[output]} ]] ; then
     if [[ -n "${kv[log]}" ]] ; then
-      cat ${kv[output]} >> ${kv[log]}
+      cat "${kv[output]}" >> "${kv[log]}"
     else
-      cat ${kv[output]} | logger -i -t "${kv[prog_name]}(kaosv)"
+      cat "${kv[output]}" | logger -i -t "${kv[prog_name]}(kaosv)"
     fi
 
-    echo -n > ${kv[output]}
+    echo -n > "${kv[output]}"
   fi
 }
 
@@ -2066,7 +2074,7 @@ kvGetBootTimestamp() {
   local upt=$(cat "/proc/uptime" | cut -f1 -d".")
   local now=$(date +%s)
 
-  echo $(( $now - $upt ))
+  echo $(( now - upt ))
 }
 
 # -
@@ -2078,7 +2086,7 @@ kvGetBootTimestamp() {
 # Code: No
 # Echo: Modification timestamp (Number)
 kvGetFileModDate() {
-  stat -c '%Y' $1 2> /dev/null
+  stat -c '%Y' "$1" 2> /dev/null
 }
 
 ###############################################################################
