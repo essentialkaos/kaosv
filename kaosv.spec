@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.10.1
+Version:         2.10.2
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Mon Nov 21 2016 Anton Novojilov <andy@essentialkaos.com> - 2.10.2-0
+- Fixed bug with reading system limits
+
 * Tue Nov 15 2016 Anton Novojilov <andy@essentialkaos.com> - 2.10.1-0
 - Code refactoring
 
