@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.10.1"
+KV_VERSION="2.10.2"
 
 ###############################################################################
 
@@ -1465,7 +1465,7 @@ kvGetUserLimit() {
         hard="${reca[3]}"
       fi
     fi
-  done < <(cat "$LIMITS" | tr "\t" " " | tr -s " " | grep -v "#" | grep "$user ")
+  done < <(cat "$LIMITS" 2>/dev/null | tr "\t" " " | tr -s " " | grep -v "#" | grep "$user ")
 
   [[ -n "$soft" || -n "$hard" ]] && echo "$soft:$hard"
 }
