@@ -1473,6 +1473,8 @@ kvMakeTempLimitsConfig() {
   [[ -n "$s_nofile" ]] && echo "${kv[user]} soft nofile ${s_nofile}" >> "$result"
   [[ -n "$h_nofile" ]] && echo "${kv[user]} hard nofile ${h_nofile}" >> "$result"
 
+  echo "" >> "$result"
+
   echo "$result"
 }
 
