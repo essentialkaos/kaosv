@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.11.0"
+KV_VERSION="2.12.0"
 
 ###############################################################################
 
@@ -89,19 +89,21 @@ export PATH="/sbin:/usr/sbin:/bin:/usr/bin"
 USER_ID=$(id -u)
 
 # Status code for working service
-STATUS_WORKS=1
+STATUS_RUNNING=1
 # Status code for stopped service
 STATUS_STOPPED=2
 # Status code for broken service
 STATUS_BROKEN=3
-# Status code for situation when service doesn't works, but pid file is exist
+# Status code for situation when service is stopped, but pid file is exist
 STATUS_DEAD_WITH_PID=4
-# Status code for situation when service doesn't works, but lock file is exist
+# Status code for situation when service is stopped, but lock file is exist
 STATUS_DEAD_WITH_LOCK=5
-# Status code for situation when service works, but pid file is not exist
+# Status code for situation when service is running, but pid file is not exist
 STATUS_NO_PID=6
-# Status code for situation when service works, but lock file is not exist
+# Status code for situation when service is running, but lock file is not exist
 STATUS_NO_LOCK=7
+
+STATUS_WORKS=1
 
 # Status for action performed without errors
 ACTION_OK=0
@@ -741,7 +743,7 @@ kv.getStatus() {
       if [[ ! -f ${kv[lock_file]} ]] ; then
         echo $STATUS_NO_LOCK && return
       else
-        echo $STATUS_WORKS && return
+        echo $STATUS_RUNNING && return
       fi
     else
       echo $STATUS_DEAD_WITH_PID && return
@@ -1665,8 +1667,8 @@ kvStart() {
 
   local status=$(kv.getStatus)
 
-  if [[ "$status" == "$STATUS_WORKS" ]] ; then
-    kv.warn "Service already works."
+  if [[ "$status" == "$STATUS_RUNNING" ]] ; then
+    kv.warn "Service already running."
     return $ACTION_ERROR
   fi
 
@@ -1734,7 +1736,7 @@ kvStop() {
 
   local retcode
 
-  kvFixIfNotInStatus $STATUS_WORKS
+  kvFixIfNotInStatus $STATUS_RUNNING
 
   if [[ -n "${kv_dout[stop_pre]}" ]] ; then
     kvExecDefHandler "stop" "pre" "$@"
@@ -1789,6 +1791,11 @@ kvRestart() {
   kv.requireRoot
 
   kvCheckPaths
+
+  if ! kv.statusIs "$STATUS_RUNNING" ; then
+    kv.warn "The service must be running for this command to have any effect."
+    return $ACTION_ERROR
+  fi
 
   if [[ -n "${kv_dout[restart_pre]}" ]] ; then
     kvExecDefHandler "restart" "pre" "$@"
@@ -1869,9 +1876,9 @@ kvFixIfNotInStatus() {
       $STATUS_DEAD_WITH_LOCK)
         kv.warn "Service is dead but lock file [${kv[lock_file]}] exists." ;;
       $STATUS_NO_PID)
-        kv.warn "Service works but pid file is not found." ;;
+        kv.warn "Service is running but pid file is not found." ;;
       $STATUS_NO_LOCK)
-        kv.warn "Service works but lock file is not found." ;;
+        kv.warn "Service is running but lock file is not found." ;;
       $STATUS_BROKEN)
         kv.warn "Something wrong (but anyway we will try fix it automatically)." ;;
     esac
@@ -1891,9 +1898,9 @@ kvStatus() {
 
   local status=$(kv.getStatus)
 
-  if [[ "$status" == "$STATUS_WORKS" ]] ; then
+  if [[ "$status" == "$STATUS_RUNNING" ]] ; then
     local pid=$(kv.getPid)
-    kv.show "Service ${kv[prog_name]} ${CL_DARK}[${pid}]${CL_NORM} is ${CL_GREEN}working${CL_NORM}."
+    kv.show "Service ${kv[prog_name]} ${CL_DARK}[${pid}]${CL_NORM} is ${CL_GREEN}running${CL_NORM}."
     return $ACTION_OK
   fi
 
@@ -1908,9 +1915,9 @@ kvStatus() {
     $STATUS_DEAD_WITH_LOCK)
       kv.warn "Service is dead but lock file [${kv[lock_file]}] exists." ;;
     $STATUS_NO_PID)
-      kv.warn "Service works but pid file is not found." ;;
+      kv.warn "Service running but pid file is not found." ;;
     $STATUS_NO_LOCK)
-      kv.warn "Service works but lock file is not found." ;;
+      kv.warn "Service running but lock file is not found." ;;
     $STATUS_BROKEN)
       kv.warn "Something wrong (but anyway we will try fix it automatically)." ;;
   esac
