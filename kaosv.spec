@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.11.0
+Version:         2.12.0
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -83,6 +83,13 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Thu Dec 01 2016 Anton Novojilov <andy@essentialkaos.com> - 2.12.0-0
+- Default restart handler now checks current service state and restart
+  service only if it is running
+- Using 'is running' instead of 'is working'
+- STATUS_WORKS replaced by STATUS_RUNNING (STATUS_WORKS still accessible
+  for compatibility with previous versions of kaosv)
+
 * Wed Nov 30 2016 Anton Novojilov <andy@essentialkaos.com> - 2.11.0-0
 - Improved setting system limits process
 
