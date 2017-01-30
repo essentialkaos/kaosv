@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.12.0"
+KV_VERSION="2.12.1"
 
 ###############################################################################
 
@@ -1060,7 +1060,11 @@ kv.setOOMScoreAdj() {
   [[ -z "$pid" ]] && pid=$(kv.getPid)
   [[ -z "$pid" ]] && return 1
 
-  echo "$adj" > "/proc/$pid/oom_score_adj"
+  echo "$adj" 1> "/proc/$pid/oom_score_adj" 2>/dev/null
+
+  if [[ $? -ne 0 ]] ; then
+    kv.warn "Can't set OOM score adjustment"
+  fi
 }
 
 # Check SE Linux
@@ -1132,7 +1136,7 @@ kv.hasLock() {
 # Example:
 # kv.createPid 12345
 kv.createPid() {
-  echo "$1" > "${kv[pid_file]}"
+  echo "$1" 1> "${kv[pid_file]}" 2>/dev/null
 }
 
 # Remove pid file
@@ -1300,7 +1304,7 @@ kv.log() {
   local message="$*"
 
   if [[ -n "${kv[log]}" ]] ; then
-    echo "$message" >> "${kv[log]}"
+    echo "$message" 1>> "${kv[log]}" 2> /dev/null
   else
     echo "$message" | logger -i -t "${kv[prog_name]}(kaosv)"
   fi
@@ -1475,7 +1479,7 @@ kvMakeTempLimitsConfig() {
   [[ -n "$s_nofile" ]] && echo "${kv[user]} soft nofile ${s_nofile}" >> "$result"
   [[ -n "$h_nofile" ]] && echo "${kv[user]} hard nofile ${h_nofile}" >> "$result"
 
-  echo "" >> "$result"
+  echo "" 1>> "$result" 2> /dev/null
 
   echo "$result"
 }
@@ -2047,7 +2051,7 @@ kvFixProblems() {
       local pid=$(kv.findPid)
       [[ -z "$pid" ]] && kv.showStatusMessage $ACTION_ERROR && return
 
-      echo "$pid" > "${kv[pid_file]}" 2> /dev/null
+      echo "$pid" 1> "${kv[pid_file]}" 2> /dev/null
       [[ $? -ne 0 ]] && kv.showStatusMessage $ACTION_ERROR && return
 
       if [[ -n "${kv[user]}" ]] ; then
@@ -2072,7 +2076,7 @@ kvFixProblems() {
 
       local pid=$(kv.findPid)
 
-      [[ -n "$pid" ]] && echo "$pid" > "${kv[pid_file]}" &> /dev/null
+      [[ -n "$pid" ]] && echo "$pid" 1> "${kv[pid_file]}" 2> /dev/null
       [[ -n "${kv[user]}" ]] && chown "${kv[user]}:" "${kv[pid_file]}" &> /dev/null
 
       kv.show "POSSIBLE FIXED" $BROWN
@@ -2134,7 +2138,7 @@ kvSendOutputToLogger() {
       cat "${kv[output]}" | logger -i -t "${kv[prog_name]}(kaosv)"
     fi
 
-    echo -n > "${kv[output]}"
+    echo -n 1> "${kv[output]}" 2> /dev/null
   fi
 }
 

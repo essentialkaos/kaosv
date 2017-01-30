@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.12.0
+Version:         2.12.1
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Mon Jan 30 2017 Anton Novojilov <andy@essentialkaos.com> - 2.12.1-0
+- Minor error handling improvements
+
 * Thu Dec 01 2016 Anton Novojilov <andy@essentialkaos.com> - 2.12.0-0
 - Default restart handler now checks current service state and restart
   service only if it is running
