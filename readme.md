@@ -1,4 +1,4 @@
-## KAOSv [![Code Climate](https://codeclimate.com/github/essentialkaos/kaosv/badges/gpa.svg)](https://codeclimate.com/github/essentialkaos/kaosv)
+## KAOSv [![Code Climate](https://codeclimate.com/github/essentialkaos/kaosv/badges/gpa.svg)](https://codeclimate.com/github/essentialkaos/kaosv) [![License](https://gh.kaos.io/ekol.svg)](https://essentialkaos.com/ekol)
 
 `kaosv` is bash lib for SysV init scripts.
 
