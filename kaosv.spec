@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.12.1
+Version:         2.12.2
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -83,6 +83,11 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Sat Mar 11 2017 Anton Novojilov <andy@essentialkaos.com> - 2.12.2-0
+- Default status handler now insecure (can be run without root privileges)
+- Improved documentation
+- Overall minor improvements
+
 * Mon Jan 30 2017 Anton Novojilov <andy@essentialkaos.com> - 2.12.1-0
 - Minor error handling improvements
 
@@ -140,7 +145,7 @@ rm -rf %{buildroot}
 - Code refactoring
 
 * Sun Jul 26 2015 Anton Novojilov <andy@essentialkaos.com> - 2.5.5-0
-- Fixed bug with status command which works only with sudo priveleges
+- Fixed bug with status command which works only with sudo privileges
 
 * Fri Jul 24 2015 Anton Novojilov <andy@essentialkaos.com> - 2.5.4-0
 - Fixed bug with pid and lock files naming

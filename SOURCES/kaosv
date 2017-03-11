@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.12.1"
+KV_VERSION="2.12.2"
 
 ###############################################################################
 
@@ -94,22 +94,22 @@ STATUS_RUNNING=1
 STATUS_STOPPED=2
 # Status code for broken service
 STATUS_BROKEN=3
-# Status code for situation when service is stopped, but pid file is exist
+# Status code for a situation when service is stopped, but PID file is exist
 STATUS_DEAD_WITH_PID=4
-# Status code for situation when service is stopped, but lock file is exist
+# Status code for a situation when service is stopped, but lock file is exist
 STATUS_DEAD_WITH_LOCK=5
-# Status code for situation when service is running, but pid file is not exist
+# Status code for a situation when service is running, but PID file doesn't exist
 STATUS_NO_PID=6
-# Status code for situation when service is running, but lock file is not exist
+# Status code for a situation when service is running, but lock file doesn't exist
 STATUS_NO_LOCK=7
 
 STATUS_WORKS=1
 
-# Status for action performed without errors
+# Status for an action performed without errors
 ACTION_OK=0
-# Status for action with some errors
+# Status for an action with some errors
 ACTION_ERROR=1
-# Status for action which was forced
+# Status for an action which was forced
 ACTION_FORCED=2
 
 # Code for HUP signal
@@ -208,16 +208,16 @@ declare -A kv_args
 declare -A kv_dout
 declare -A kv
 
-# Program name used as base for help/paths/files generation
+# Program name used as the base for help/paths/files generation
 kv[prog_name]=""
 
-# Pattern used for searching service process in process tree
+# The pattern used for searching service process in the process tree
 kv[search_pattern]=""
 
 # Path to lock file
 kv[lock_file]=""
 
-# Path to pid file
+# Path to PID file
 kv[pid_file]=""
 
 # Service user
@@ -226,19 +226,19 @@ kv[user]=""
 # Service dir
 kv[dir]=""
 
-# Automatically create pid file while service demonization (Boolean)
+# Automatically create PID file while service demonization (Boolean)
 kv[auto_pid]=true
 
 # Automatically create lock file while service demonization (Boolean)
 kv[auto_lock]=true
 
-# Automatically generete help command content (Boolean)
+# Automatically generate help command content (Boolean)
 kv[auto_info]=true
 
 # Automatically log all actions (start/stop/restart/etc...) (Boolean)
 kv[auto_actions_log]=""
 
-# Automatically search pid if pid file is not exist (Boolean)
+# Automatically search PID if PID file doesn't exist (Boolean)
 kv[auto_pid_search]=true
 
 # Time in seconds for service start
@@ -250,7 +250,7 @@ kv[delay_stop]=30
 # Delay between start and stop
 kv[delay_restart]=0
 
-# Path to pid dir
+# Path to PID dir
 kv[pid_dir]=/var/run
 
 # Path to lock dir
@@ -258,8 +258,6 @@ kv[lock_dir]=/var/lock/subsys
 
 # Path to log
 kv[log]=""
-
-kv[output]=""
 
 # Core limit (Number)
 kv[core_limit]=0
@@ -288,9 +286,12 @@ kv[script]=$(readlink -f "$0" | xargs -n1 basename)
 # Real user name (search real user name over sudo) (String)
 kv[real_user]=$(who -m | cut -f1 -d" " | egrep "[a-z]" || echo "root")
 
+# Temporary file for service output (can be only set to /dev/null)
+kv[output]=""
+
 ###############################################################################
 
-kv_pid="" # Pid cache
+kv_pid="" # PID cache
 
 ###############################################################################
 
@@ -430,7 +431,7 @@ kv.addCommandAlias() {
   kv_alias["$als"]="$comm"
 }
 
-# Add some vars for command showed in info
+# Add some arguments supported by command
 #
 # 1: Command (String)
 # *: Vars (String)
@@ -495,7 +496,7 @@ kv.readSysconfig() {
   if [[ -n "$strict" ]] ; then
     [[ -z "$conf" ]] && kv.error "Can't read sysconfig file - config name is not defined." && return 1
 
-    [[ ! -f "$SYSCONFIG_DIR/$conf" ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> is not exist." && return 1
+    [[ ! -f "$SYSCONFIG_DIR/$conf" ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> doesn't exist." && return 1
     [[ ! -r "$SYSCONFIG_DIR/$conf" ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> is not readable." && return 1
   fi
 
@@ -569,7 +570,7 @@ kv.runAs() {
 
   if [[ -n "$cmd_user" ]] ; then
     if ! kv.hasUser "$cmd_user" ; then
-      echo "Can't execute command - user $cmd_user is not exist on the system." >> "${kv[output]}"
+      echo "Can't execute command - user $cmd_user doesn't exist on the system." >> "${kv[output]}"
       return $ACTION_ERROR
     fi
   fi
@@ -720,7 +721,7 @@ kv.statusIs() {
   [[ "$cstatus" == "$nstatus" ]] && return 0 || return 1
 }
 
-# Get status for service
+# Get the status of service
 #
 # Code: No
 # Echo: Status code (Number)
@@ -767,7 +768,7 @@ kv.getStatus() {
   fi
 }
 
-# Get or find pid
+# Get or find PID
 #
 # Code: No
 # Echo: Pid (Number)
@@ -783,7 +784,7 @@ kv.getPid() {
   fi
 }
 
-# Find pid for service
+# Find PID for service
 #
 # 1: Search pattern (String) [Optional]
 #
@@ -814,7 +815,7 @@ kv.showProcessMessage() {
   kv.showm "$1: " $BOLD
 }
 
-# Show status of previus action
+# Show status message by status code
 #
 # 1: Status code (Number)
 #
@@ -836,7 +837,7 @@ kv.showStatusMessage() {
 
 # Get status of starting service
 #
-# 1: Path to pid file (String) [Optional]
+# 1: Path to PID file (String) [Optional]
 # 2: Don't check process status (Boolean) [Optional]
 #
 # Code: Status (Boolean)
@@ -919,7 +920,7 @@ kv.killProcess() {
   kv.removePid
 }
 
-# Return 0 if process with specified pid exist
+# Return 0 if process with specified PID exist
 #
 # 1: Pid (Number)
 #
@@ -928,7 +929,7 @@ kv.killProcess() {
 #
 # Example:
 # if kv.isProcExist 12345 ; then
-#   kv.error "Process with pid 12345 is not exist"
+#   kv.error "Process with PID 12345 doesn't exist"
 # fi
 kv.isProcExist() {
   [[ -d /proc/$1 ]] && return 0 || return 1
@@ -943,7 +944,7 @@ kv.isProcExist() {
 #
 # Example:
 # if ! kv.hasUser "serviceuser" ; then
-#   kv.error "User serviceuser is not exist!"
+#   kv.error "User serviceuser doesn't exist!"
 # fi
 kv.hasUser() {
   if egrep -q "^$1:" /etc/passwd ; then
@@ -1018,7 +1019,7 @@ kv.isInstalled() {
   return 0
 }
 
-# Send signal to service
+# Send a signal to service
 #
 # 1: Signal (String)
 # 2: Pid (Number) [Optional]
@@ -1044,7 +1045,7 @@ kv.sendSignal() {
 # Set the adjustment level for the Out of memory (OOM) killer
 #
 # 1: Adjustment level (Number) [Optional]
-# 2: Process pid (Number) [Optional]
+# 2: PID (Number) [Optional]
 #
 # Code: No
 # Echo: No
@@ -1084,7 +1085,7 @@ kv.checkSELinux() {
 
 ###############################################################################
 
-# Check is user root
+# Check if the user is root
 #
 # Code: Yes
 # Echo: No
@@ -1126,7 +1127,7 @@ kv.hasLock() {
   [[ -f "${kv[lock_file]}" ]] && return 1 || return 0
 }
 
-# Create pid file
+# Create PID file
 #
 # 1: Pid (Number)
 #
@@ -1139,7 +1140,7 @@ kv.createPid() {
   echo "$1" 1> "${kv[pid_file]}" 2>/dev/null
 }
 
-# Remove pid file
+# Remove PID file
 #
 # Code: No
 # Echo: No
@@ -1159,8 +1160,6 @@ kv.removePid() {
 # kv.exit 1
 kv.exit() {
   kvSendOutputToLogger
-
-  rm -f "${TMP_TEMPLATE//X/}*" &> /dev/null
 
   exit "${1:-0}"
 }
@@ -1347,13 +1346,13 @@ kvPrepare() {
     fi
 
     if [[ ! -d ${kv[dir]} ]] ; then
-      kv.error "Can't execute this init script. Service directory <${kv[dir]}> is not exist." $ACTION_ERROR
+      kv.error "Can't execute this init script. Service directory <${kv[dir]}> doesn't exist." $ACTION_ERROR
     fi
   fi
 
   if [[ -n "${kv[user]}" ]] ; then
     if ! kv.hasUser "${kv[user]}" ; then
-      kv.error "User <${kv[user]}> is not exist." $ACTION_ERROR
+      kv.error "User <${kv[user]}> doesn't exist." $ACTION_ERROR
     fi
   fi
 
@@ -1368,7 +1367,7 @@ kvPrepare() {
     fi
 
     if [[ ! -d "$log_dir" ]] ; then
-      kv.error "Log file directory <$log_dir> is not exist." $ACTION_ERROR
+      kv.error "Log file directory <$log_dir> doesn't exist." $ACTION_ERROR
     fi
 
     if [[ -f "${kv[log]}" && ! -w "${kv[log]}" ]] ; then
@@ -1380,7 +1379,7 @@ kvPrepare() {
   kv[lock_dir]=$(dirname "${kv[lock_file]}")
 
   if ! kvIsWellPath "${kv[pid_dir]}" ; then
-    kv.error "Can't use pid dir <${kv[pid_dir]}>." $ACTION_ERROR
+    kv.error "Can't use PID dir <${kv[pid_dir]}>." $ACTION_ERROR
   fi
 
   if ! kvIsWellPath "${kv[lock_dir]}" ; then
@@ -1398,7 +1397,7 @@ kvRegisterBasicCommands() {
   [[ -z "${kv_func[start]}" ]]   && kv_func[start]="kvStart"
   [[ -z "${kv_func[stop]}" ]]    && kv_func[stop]="kvStop"
   [[ -z "${kv_func[restart]}" ]] && kv_func[restart]="kvRestart"
-  [[ -z "${kv_func[status]}" ]]  && kv_func[status]="kvStatus"
+  [[ -z "${kv_func[status]}" ]]  && kv_func[status]="kvStatus" && kv_insec[status]=true
   [[ -z "${kv_func[help]}" ]]    && kv_func[help]="kvUsage"
 }
 
@@ -1589,7 +1588,7 @@ kvCheckPaths() {
     if [[ -n "${kv[user]}" && "${kv[user]}" != $(kvGetOwner "${kv[pid_dir]}") ]] ; then
       if kv.isRoot ; then
         if ! kv.hasUser "${kv[user]}" ; then
-          kv.error "Can't change owner for pid directory <${kv[pid_dir]}> - user <${kv[user]}> not exist on system." $ACTION_ERROR
+          kv.error "Can't change owner for PID directory <${kv[pid_dir]}> - user <${kv[user]}> not exist on system." $ACTION_ERROR
         fi
 
         chown "${kv[user]}" "${kv[pid_dir]}"
@@ -1613,7 +1612,7 @@ kvCheckPaths() {
 
 # -
 #
-# Method return owner of file
+# Method return owner of the file
 #
 # 1: File (String)
 #
@@ -1626,7 +1625,7 @@ kvGetOwner() {
 
 # -
 #
-# Method check what given path is well formated and safe
+# The method checks what given path is well formatted and safe
 #
 # 1: Path (String)
 #
@@ -1864,7 +1863,7 @@ kvExecDefHandler() {
 
 # -
 #
-# Method fix some problems if service is not in defined status
+# Method fixes some problems if service is not in defined status
 #
 # 1: Status code (Number)
 #
@@ -1876,11 +1875,11 @@ kvFixIfNotInStatus() {
   if [[ "$status" != "$status" ]] ; then
     case $status in
       $STATUS_DEAD_WITH_PID)
-        kv.warn "Service is dead but pid file [${kv[pid_file]}] exists." ;;
+        kv.warn "Service is dead but PID file [${kv[pid_file]}] exists." ;;
       $STATUS_DEAD_WITH_LOCK)
         kv.warn "Service is dead but lock file [${kv[lock_file]}] exists." ;;
       $STATUS_NO_PID)
-        kv.warn "Service is running but pid file is not found." ;;
+        kv.warn "Service is running but PID file is not found." ;;
       $STATUS_NO_LOCK)
         kv.warn "Service is running but lock file is not found." ;;
       $STATUS_BROKEN)
@@ -1898,8 +1897,6 @@ kvFixIfNotInStatus() {
 # Code: Yes
 # Echo: No
 kvStatus() {
-  kvCheckPaths
-
   local status=$(kv.getStatus)
 
   if [[ "$status" == "$STATUS_RUNNING" ]] ; then
@@ -1915,11 +1912,11 @@ kvStatus() {
 
   case $status in
     $STATUS_DEAD_WITH_PID)
-      kv.warn "Service is dead but pid file [${kv[pid_file]}] exists." ;;
+      kv.warn "Service is dead but PID file [${kv[pid_file]}] exists." ;;
     $STATUS_DEAD_WITH_LOCK)
       kv.warn "Service is dead but lock file [${kv[lock_file]}] exists." ;;
     $STATUS_NO_PID)
-      kv.warn "Service running but pid file is not found." ;;
+      kv.warn "Service running but PID file is not found." ;;
     $STATUS_NO_LOCK)
       kv.warn "Service running but lock file is not found." ;;
     $STATUS_BROKEN)
@@ -1999,7 +1996,7 @@ kvAppendBasicCommands() {
 
 # -
 #
-# Method return 0 if method with given name is exist
+# The method returns 0 if the method with given name exists
 #
 # 1: Method name (String)
 #
@@ -2017,8 +2014,8 @@ kvIsFuncExist() {
 
 # -
 #
-# Method fix some problems with script (lock or pid files with stopped service,
-# deleted lock or pid file with working service, etc...)
+# Method fixes some problems with a script (lock or PID files with stopped service,
+# deleted lock or PID file with working service, etc...)
 #
 # Code: No
 # Echo: No
@@ -2032,7 +2029,7 @@ kvFixProblems() {
     local status=$(kv.getStatus)
 
     if [[ $status -eq $STATUS_DEAD_WITH_PID ]] ; then
-      kv.showm "Removing pid file: "
+      kv.showm "Removing PID file: "
 
       rm -f "${kv[pid_file]}" &> /dev/null
       kv.showStatusMessage $?
@@ -2046,7 +2043,7 @@ kvFixProblems() {
 
       continue
     elif [[ $status -eq $STATUS_NO_PID ]] ; then
-      kv.showm "Restoring pid file: "
+      kv.showm "Restoring PID file: "
 
       local pid=$(kv.findPid)
       [[ -z "$pid" ]] && kv.showStatusMessage $ACTION_ERROR && return
@@ -2101,7 +2098,7 @@ kvExportSupervisorCron() {
 
 # -
 #
-# Method remove  supervisor cron task
+# Method remove supervisor cron task
 #
 # Code: No
 # Echo: No
@@ -2113,13 +2110,12 @@ kvRemoveSupervisorCron() {
 
 # -
 #
-# Method create temporary file for service output
+# The method creates a temporary file for service output
 #
 # Code: No
 # Echo: No
 kvMkOutput() {
   [[ "${kv[output]}" == "/dev/null" ]] && return 1
-  [[ -e "${kv[output]}" && -w "${kv[output]}" ]] && return 0
 
   kv[output]=$(mktemp "$TMP_TEMPLATE")
 }
@@ -2131,14 +2127,16 @@ kvMkOutput() {
 # Code: No
 # Echo: No
 kvSendOutputToLogger() {
-  if [[ -s ${kv[output]} ]] ; then
+  if [[ -e ${kv[output]} && -s ${kv[output]} ]] ; then
     if [[ -n "${kv[log]}" ]] ; then
-      cat "${kv[output]}" >> "${kv[log]}"
+      cat "${kv[output]}" 1> "${kv[log]}" 2>/dev/null
     else
       cat "${kv[output]}" | logger -i -t "${kv[prog_name]}(kaosv)"
     fi
+  fi
 
-    echo -n 1> "${kv[output]}" 2> /dev/null
+  if [[ -e ${kv[output]} ]] ; then
+    rm -f "${kv[output]}" &> /dev/null
   fi
 }
 
