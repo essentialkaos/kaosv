@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.12.2"
+KV_VERSION="2.12.3"
 
 ###############################################################################
 
@@ -1912,15 +1912,15 @@ kvStatus() {
 
   case $status in
     $STATUS_DEAD_WITH_PID)
-      kv.warn "Service is dead but PID file [${kv[pid_file]}] exists." ;;
+      kv.warn "Service ${kv[prog_name]} is dead but PID file [${kv[pid_file]}] exists." ;;
     $STATUS_DEAD_WITH_LOCK)
-      kv.warn "Service is dead but lock file [${kv[lock_file]}] exists." ;;
+      kv.warn "Service ${kv[prog_name]} is dead but lock file [${kv[lock_file]}] exists." ;;
     $STATUS_NO_PID)
-      kv.warn "Service running but PID file is not found." ;;
+      kv.warn "Service ${kv[prog_name]} running but PID file is not found." ;;
     $STATUS_NO_LOCK)
-      kv.warn "Service running but lock file is not found." ;;
+      kv.warn "Service ${kv[prog_name]} running but lock file is not found." ;;
     $STATUS_BROKEN)
-      kv.warn "Something wrong (but anyway we will try fix it automatically)." ;;
+      kv.warn "Something wrong with ${kv[prog_name]} (but anyway we will try to fix it automatically)." ;;
   esac
 
   if kv.isRoot ; then

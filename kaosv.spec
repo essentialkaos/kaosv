@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Tue Mar 14 2017 Anton Novojilov <andy@essentialkaos.com> - 2.12.3-0
+- More detailed warning messages for status command
+
 * Sat Mar 11 2017 Anton Novojilov <andy@essentialkaos.com> - 2.12.2-0
 - Default status handler now insecure (can be run without root privileges)
 - Improved documentation
