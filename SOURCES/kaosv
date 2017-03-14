@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.12.2"
+KV_VERSION="2.12.3"
 
 ###############################################################################
 
@@ -1323,26 +1323,26 @@ kvPrepare() {
   fi
 
   if [[ -n "${kv[auto_pid_search]}" && -z "${kv[search_pattern]}" ]] ; then
-    kv.error "Can't execute this init script. Please define search_pattern value first." $ACTION_ERROR
+    kv.error "Can't execute this init script. Please define \"search_pattern\" property first." $ACTION_ERROR
   fi
 
   if ! kvIsWellPath "${kv[pid_dir]}" ; then
-    kv.error "Can't execute this init script. Property pid_dir contains wrong path (${kv[pid_dir]})." $ACTION_ERROR
+    kv.error "Can't execute this init script. Property \"pid_dir\" contains the wrong path (${kv[pid_dir]})." $ACTION_ERROR
   fi
 
   if ! kvIsWellPath "${kv[lock_dir]}" ; then
-    kv.error "Can't execute this init script. Property lock_dir contains wrong path (${kv[lock_dir]})." $ACTION_ERROR
+    kv.error "Can't execute this init script. Property \"lock_dir\" contains the wrong path (${kv[lock_dir]})." $ACTION_ERROR
   fi
 
   if [[ -n "${kv[output]}" ]] ; then
     if ! kvIsWellPath "${kv[output]}" ; then
-      kv.error "Can't execute this init script. Property output contains wrong path (${kv[output]})." $ACTION_ERROR
+      kv.error "Can't execute this init script. Property \"output\" contains the wrong path (${kv[output]})." $ACTION_ERROR
     fi
   fi
 
   if [[ -n "${kv[dir]}" ]] ; then
     if ! kvIsWellPath "${kv[dir]}" ; then
-      kv.error "Can't execute this init script. Property dir contains wrong path (${kv[dir]})." $ACTION_ERROR
+      kv.error "Can't execute this init script. Property \"dir\" contains the wrong path (${kv[dir]})." $ACTION_ERROR
     fi
 
     if [[ ! -d ${kv[dir]} ]] ; then
@@ -1588,7 +1588,7 @@ kvCheckPaths() {
     if [[ -n "${kv[user]}" && "${kv[user]}" != $(kvGetOwner "${kv[pid_dir]}") ]] ; then
       if kv.isRoot ; then
         if ! kv.hasUser "${kv[user]}" ; then
-          kv.error "Can't change owner for PID directory <${kv[pid_dir]}> - user <${kv[user]}> not exist on system." $ACTION_ERROR
+          kv.error "Can't change owner for PID directory <${kv[pid_dir]}> - user <${kv[user]}> not exist on the system." $ACTION_ERROR
         fi
 
         chown "${kv[user]}" "${kv[pid_dir]}"
@@ -1712,7 +1712,7 @@ kvStart() {
     if [[ $retcode -eq 0 ]] ; then
       kv.log "${kv[real_user]} started service."
     else
-      kv.log "${kv[real_user]} tried to start service but action failed."
+      kv.log "${kv[real_user]} tried to start service but the action failed."
     fi
   fi
 
@@ -1777,7 +1777,7 @@ kvStop() {
     if [[ $retcode -eq 0 ]] ; then
       kv.log "${kv[real_user]} stopped service."
     else
-      kv.log "${kv[real_user]} tried to stop service but action failed."
+      kv.log "${kv[real_user]} tried to stop service but the action failed."
     fi
   fi
 
@@ -1883,7 +1883,7 @@ kvFixIfNotInStatus() {
       $STATUS_NO_LOCK)
         kv.warn "Service is running but lock file is not found." ;;
       $STATUS_BROKEN)
-        kv.warn "Something wrong (but anyway we will try fix it automatically)." ;;
+        kv.warn "Something wrong (but anyway we will try to fix it automatically)." ;;
     esac
 
     kvFixProblems
@@ -1912,15 +1912,15 @@ kvStatus() {
 
   case $status in
     $STATUS_DEAD_WITH_PID)
-      kv.warn "Service is dead but PID file [${kv[pid_file]}] exists." ;;
+      kv.warn "Service ${kv[prog_name]} is dead but PID file [${kv[pid_file]}] exists." ;;
     $STATUS_DEAD_WITH_LOCK)
-      kv.warn "Service is dead but lock file [${kv[lock_file]}] exists." ;;
+      kv.warn "Service ${kv[prog_name]} is dead but lock file [${kv[lock_file]}] exists." ;;
     $STATUS_NO_PID)
-      kv.warn "Service running but PID file is not found." ;;
+      kv.warn "Service ${kv[prog_name]} running but PID file is not found." ;;
     $STATUS_NO_LOCK)
-      kv.warn "Service running but lock file is not found." ;;
+      kv.warn "Service ${kv[prog_name]} running but lock file is not found." ;;
     $STATUS_BROKEN)
-      kv.warn "Something wrong (but anyway we will try fix it automatically)." ;;
+      kv.warn "Something wrong with ${kv[prog_name]} (but anyway we will try to fix it automatically)." ;;
   esac
 
   if kv.isRoot ; then
