@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.12.2
+Version:         2.12.3
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
