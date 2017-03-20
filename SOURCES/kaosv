@@ -494,10 +494,10 @@ kv.readSysconfig() {
   strict="$2"
 
   if [[ -n "$strict" ]] ; then
-    [[ -z "$conf" ]] && kv.error "Can't read sysconfig file - config name is not defined." && return 1
+    [[ -z "$conf" ]] && kv.error "Can't read sysconfig file - config name is not defined" && return 1
 
-    [[ ! -f "$SYSCONFIG_DIR/$conf" ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> doesn't exist." && return 1
-    [[ ! -r "$SYSCONFIG_DIR/$conf" ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> is not readable." && return 1
+    [[ ! -f "$SYSCONFIG_DIR/$conf" ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> doesn't exist" && return 1
+    [[ ! -r "$SYSCONFIG_DIR/$conf" ]] && kv.error "Can't read sysconfig file - file <$SYSCONFIG_DIR/$conf> is not readable" && return 1
   fi
 
   [[ ! -r $SYSCONFIG_DIR/$conf ]] && return 0
@@ -508,11 +508,11 @@ kv.readSysconfig() {
   oi=$(stat -c "%U" "$SYSCONFIG_DIR/$conf")
 
   if [[ "${ar:8:1}" != "-" ]] ; then
-    kv.error "Can't read sysconfig file - unsecure access rights." && return 1
+    kv.error "Can't read sysconfig file - unsecure access rights" && return 1
   fi
 
   if [[ "$oi" != "root" ]] ; then
-    kv.error "Can't read sysconfig file - owner is not root." && return 1
+    kv.error "Can't read sysconfig file - owner is not root" && return 1
   fi
 
   source "$SYSCONFIG_DIR/$conf"
@@ -702,7 +702,7 @@ kv.usage() {
 # Echo: No
 kv.requireRoot() {
   if ! kv.isRoot ; then
-    kv.error "You must have root privileges to use this command." $ACTION_ERROR
+    kv.error "You must have root privileges to use this command" $ACTION_ERROR
   fi
 }
 
@@ -1352,7 +1352,7 @@ kvPrepare() {
 
   if [[ -n "${kv[user]}" ]] ; then
     if ! kv.hasUser "${kv[user]}" ; then
-      kv.error "User <${kv[user]}> doesn't exist." $ACTION_ERROR
+      kv.error "User <${kv[user]}> doesn't exist" $ACTION_ERROR
     fi
   fi
 
@@ -1367,11 +1367,11 @@ kvPrepare() {
     fi
 
     if [[ ! -d "$log_dir" ]] ; then
-      kv.error "Log file directory <$log_dir> doesn't exist." $ACTION_ERROR
+      kv.error "Log file directory <$log_dir> doesn't exist" $ACTION_ERROR
     fi
 
     if [[ -f "${kv[log]}" && ! -w "${kv[log]}" ]] ; then
-      kv.error "Log file is not writable." $ACTION_ERROR
+      kv.error "Log file is not writable" $ACTION_ERROR
     fi
   fi
 
@@ -1379,11 +1379,11 @@ kvPrepare() {
   kv[lock_dir]=$(dirname "${kv[lock_file]}")
 
   if ! kvIsWellPath "${kv[pid_dir]}" ; then
-    kv.error "Can't use PID dir <${kv[pid_dir]}>." $ACTION_ERROR
+    kv.error "Can't use PID dir <${kv[pid_dir]}>" $ACTION_ERROR
   fi
 
   if ! kvIsWellPath "${kv[lock_dir]}" ; then
-    kv.error "Can't use lock dir <${kv[lock_dir]}>." $ACTION_ERROR
+    kv.error "Can't use lock dir <${kv[lock_dir]}>" $ACTION_ERROR
   fi
 }
 
@@ -1588,7 +1588,7 @@ kvCheckPaths() {
     if [[ -n "${kv[user]}" && "${kv[user]}" != $(kvGetOwner "${kv[pid_dir]}") ]] ; then
       if kv.isRoot ; then
         if ! kv.hasUser "${kv[user]}" ; then
-          kv.error "Can't change owner for PID directory <${kv[pid_dir]}> - user <${kv[user]}> not exist on the system." $ACTION_ERROR
+          kv.error "Can't change owner for PID directory <${kv[pid_dir]}> - user <${kv[user]}> not exist on the system" $ACTION_ERROR
         fi
 
         chown "${kv[user]}" "${kv[pid_dir]}"
@@ -1603,10 +1603,10 @@ kvCheckPaths() {
   fi
 
   if [[ ! -w "${kv[lock_dir]}" ]] ; then
-    kv.error "Lock dir <${kv[lock_dir]}> is not writable." $ACTION_ERROR
+    kv.error "Lock dir <${kv[lock_dir]}> is not writable" $ACTION_ERROR
   fi
    if [[ ! -w "${kv[pid_dir]}" ]] ; then
-    kv.error "Pid dir <${kv[pid_dir]}> is not writable." $ACTION_ERROR
+    kv.error "Pid dir <${kv[pid_dir]}> is not writable" $ACTION_ERROR
   fi
 }
 
@@ -1671,7 +1671,7 @@ kvStart() {
   local status=$(kv.getStatus)
 
   if [[ "$status" == "$STATUS_RUNNING" ]] ; then
-    kv.warn "Service already running."
+    kv.warn "Service already running"
     return $ACTION_ERROR
   fi
 
@@ -1733,7 +1733,7 @@ kvStop() {
   local status=$(kv.getStatus)
 
   if [[ "$status" == "$STATUS_STOPPED" ]] ; then
-    kv.warn "Service already stopped."
+    kv.warn "Service already stopped"
     return $ACTION_ERROR
   fi
 
@@ -1796,7 +1796,7 @@ kvRestart() {
   kvCheckPaths
 
   if ! kv.statusIs "$STATUS_RUNNING" ; then
-    kv.warn "The service must be running for this command to have any effect."
+    kv.warn "The service must be running for this command to have any effect"
     return $ACTION_ERROR
   fi
 
@@ -1875,15 +1875,15 @@ kvFixIfNotInStatus() {
   if [[ "$status" != "$status" ]] ; then
     case $status in
       $STATUS_DEAD_WITH_PID)
-        kv.warn "Service is dead but PID file [${kv[pid_file]}] exists." ;;
+        kv.warn "Service is dead but PID file [${kv[pid_file]}] exists" ;;
       $STATUS_DEAD_WITH_LOCK)
-        kv.warn "Service is dead but lock file [${kv[lock_file]}] exists." ;;
+        kv.warn "Service is dead but lock file [${kv[lock_file]}] exists" ;;
       $STATUS_NO_PID)
-        kv.warn "Service is running but PID file is not found." ;;
+        kv.warn "Service is running but PID file is not found" ;;
       $STATUS_NO_LOCK)
-        kv.warn "Service is running but lock file is not found." ;;
+        kv.warn "Service is running but lock file is not found" ;;
       $STATUS_BROKEN)
-        kv.warn "Something wrong (but anyway we will try to fix it automatically)." ;;
+        kv.warn "Something wrong (but anyway we will try to fix it automatically)" ;;
     esac
 
     kvFixProblems
@@ -1901,26 +1901,26 @@ kvStatus() {
 
   if [[ "$status" == "$STATUS_RUNNING" ]] ; then
     local pid=$(kv.getPid)
-    kv.show "Service ${kv[prog_name]} ${CL_DARK}[${pid}]${CL_NORM} is ${CL_GREEN}running${CL_NORM}."
+    kv.show "Service ${kv[prog_name]} ${CL_DARK}[${pid}]${CL_NORM} is ${CL_GREEN}running${CL_NORM}"
     return $ACTION_OK
   fi
 
   if [[ "$status" == "$STATUS_STOPPED" ]] ; then
-    kv.show "Service ${kv[prog_name]} is ${CL_BROWN}stopped${CL_NORM}."
+    kv.show "Service ${kv[prog_name]} is ${CL_BROWN}stopped${CL_NORM}"
     return 3
   fi
 
   case $status in
     $STATUS_DEAD_WITH_PID)
-      kv.warn "Service ${kv[prog_name]} is dead but PID file [${kv[pid_file]}] exists." ;;
+      kv.warn "Service ${kv[prog_name]} is dead but PID file [${kv[pid_file]}] exists" ;;
     $STATUS_DEAD_WITH_LOCK)
-      kv.warn "Service ${kv[prog_name]} is dead but lock file [${kv[lock_file]}] exists." ;;
+      kv.warn "Service ${kv[prog_name]} is dead but lock file [${kv[lock_file]}] exists" ;;
     $STATUS_NO_PID)
-      kv.warn "Service ${kv[prog_name]} running but PID file is not found." ;;
+      kv.warn "Service ${kv[prog_name]} running but PID file is not found" ;;
     $STATUS_NO_LOCK)
-      kv.warn "Service ${kv[prog_name]} running but lock file is not found." ;;
+      kv.warn "Service ${kv[prog_name]} running but lock file is not found" ;;
     $STATUS_BROKEN)
-      kv.warn "Something wrong with ${kv[prog_name]} (but anyway we will try to fix it automatically)." ;;
+      kv.warn "Something wrong with ${kv[prog_name]} (but anyway we will try to fix it automatically)" ;;
   esac
 
   if kv.isRoot ; then
@@ -2021,7 +2021,7 @@ kvIsFuncExist() {
 # Echo: No
 kvFixProblems() {
   if ! kv.isRoot ; then
-    show "You must have superuser privileges for fixing problems automatically."
+    show "You must have superuser privileges for fixing problems automatically"
     return
   fi
 
