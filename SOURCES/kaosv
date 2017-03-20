@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.12.3"
+KV_VERSION="2.12.4"
 
 ###############################################################################
 
@@ -323,7 +323,7 @@ kv.go() {
   local comm_handler="${kv_func["$comm"]}"
 
   if ! kvIsFuncExist "$comm_handler" ; then
-    kv.error "Can't find handler for command <$comm>." $ACTION_ERROR
+    kv.error "Can't find handler for command $comm" $ACTION_ERROR
   fi
 
   if [[ -z ${kv_insec["$comm"]} ]] ; then
@@ -332,7 +332,7 @@ kv.go() {
   fi
 
   if [[ -n "${kv[auto_actions_log]}" ]] ; then
-    kv.log "${kv[real_user]} executed command $comm."
+    kv.log "${kv[real_user]} executed command $comm"
   fi
 
   $comm_handler "$@"
@@ -534,7 +534,7 @@ kv.readSysconfig() {
 #   return $ACTION_ERROR
 # fi
 kv.run() {
-  [[ $# -eq 0 ]] && kv.log "You can't execute kv.run without args." && return 1
+  [[ $# -eq 0 ]] && kv.log "You can't execute kv.run without arguments" && return 1
 
   local cmd_user="${kv[user]}"
 
@@ -562,7 +562,7 @@ kv.run() {
 #   return $ACTION_ERROR
 # fi
 kv.runAs() {
-  [[ $# -le 1 ]] && kv.log "You can't execute kv.runAs without args." && return 1
+  [[ $# -le 1 ]] && kv.log "You can't execute kv.runAs without arguments" && return 1
 
   local cmd_user="$1"
 
@@ -570,7 +570,7 @@ kv.runAs() {
 
   if [[ -n "$cmd_user" ]] ; then
     if ! kv.hasUser "$cmd_user" ; then
-      echo "Can't execute command - user $cmd_user doesn't exist on the system." >> "${kv[output]}"
+      echo "Can't execute command - user $cmd_user doesn't exist on the system" >> "${kv[output]}"
       return $ACTION_ERROR
     fi
   fi
@@ -615,11 +615,11 @@ kv.runAs() {
 #   return $ACTION_ERROR
 # fi
 kv.daemonize() {
-  [[ $# -eq 0 ]] && kv.log "You can't execute kv.daemonize without args." && return 1
+  [[ $# -eq 0 ]] && kv.log "You can't execute kv.daemonize without arguments" && return 1
 
   local bin="$1"
 
-  [[ "${bin:0:1}" != "/" || ! -x $bin ]] && kv.log "First argument in kv.daemonize must be absolute path to executable file." && return 1
+  [[ "${bin:0:1}" != "/" || ! -x $bin ]] && kv.log "First argument in kv.daemonize must be absolute path to executable file" && return 1
 
   local args=""
 
@@ -1710,9 +1710,9 @@ kvStart() {
 
   if [[ -n "${kv[auto_actions_log]}" ]] ; then
     if [[ $retcode -eq 0 ]] ; then
-      kv.log "${kv[real_user]} started service."
+      kv.log "${kv[real_user]} started service"
     else
-      kv.log "${kv[real_user]} tried to start service but the action failed."
+      kv.log "${kv[real_user]} tried to start service but the action failed"
     fi
   fi
 
@@ -1775,9 +1775,9 @@ kvStop() {
 
   if [[ -n "${kv[auto_actions_log]}" ]] ; then
     if [[ $retcode -eq 0 ]] ; then
-      kv.log "${kv[real_user]} stopped service."
+      kv.log "${kv[real_user]} stopped service"
     else
-      kv.log "${kv[real_user]} tried to stop service but the action failed."
+      kv.log "${kv[real_user]} tried to stop service but the action failed"
     fi
   fi
 
