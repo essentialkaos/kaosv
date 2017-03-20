@@ -1795,6 +1795,10 @@ kvRestart() {
 
   kvCheckPaths
 
+  if ! kv.statusIs "$STATUS_STOPPED" ; then
+    kvFixIfNotInStatus "$STATUS_RUNNING"
+  fi
+
   if ! kv.statusIs "$STATUS_RUNNING" ; then
     kv.warn "The service must be running for this command to have any effect"
     return $ACTION_ERROR
