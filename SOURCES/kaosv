@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.12.4"
+KV_VERSION="2.13.0"
 
 ###############################################################################
 
@@ -29,6 +29,7 @@ if [[ $(consoletype) == "pty" && -t 1 ]] ; then
   # Code for green color
   GREEN=32
   # Code for yellow color
+  YELLOW=33
   BROWN=33
   # Code for blue color
   BLUE=34
@@ -41,38 +42,42 @@ if [[ $(consoletype) == "pty" && -t 1 ]] ; then
   # Code for dark grey color
   DARK=90
 
-  CL_NORM="\e[${NORM}m"
-  CL_BOLD="\e[${BOLD}m"
-  CL_UNLN="\e[${UNLN}m"
-  CL_RED="\e[${RED}m"
-  CL_GREEN="\e[${GREEN}m"
-  CL_BROWN="\e[${BROWN}m"
-  CL_BLUE="\e[${BLUE}m"
-  CL_MAG="\e[${MAG}m"
-  CL_CYAN="\e[${CYAN}m"
-  CL_GREY="\e[${GREY}m"
-  CL_DARK="\e[${DARK}m"
-  CL_BL_RED="\e[${RED};1m"
-  CL_BL_GREEN="\e[${GREEN};1m"
-  CL_BL_BROWN="\e[${BROWN};1m"
-  CL_BL_BLUE="\e[${BLUE};1m"
-  CL_BL_MAG="\e[${MAG};1m"
-  CL_BL_CYAN="\e[${CYAN};1m"
-  CL_BL_GREY="\e[${GREY};1m"
-  CL_UL_RED="\e[${RED};4m"
-  CL_UL_GREEN="\e[${GREEN};4m"
-  CL_UL_BROWN="\e[${BROWN};4m"
-  CL_UL_BLUE="\e[${BLUE};4m"
-  CL_UL_MAG="\e[${MAG};4m"
-  CL_UL_CYAN="\e[${CYAN};4m"
-  CL_UL_GREY="\e[${GREY};4m"
-  CL_BG_RED="\e[${RED};7m"
-  CL_BG_GREEN="\e[${GREEN};7m"
-  CL_BG_BROWN="\e[${BROWN};7m"
-  CL_BG_BLUE="\e[${BLUE};7m"
-  CL_BG_MAG="\e[${MAG};7m"
-  CL_BG_CYAN="\e[${CYAN};7m"
-  CL_BG_GREY="\e[${GREY};7m"
+  CL_NORM="\e[0m"
+  CL_BOLD="\e[0;${BOLD};49m"
+  CL_UNLN="\e[0;${UNLN};49m"
+  CL_RED="\e[0;${RED};49m"
+  CL_GREEN="\e[0;${GREEN};49m"
+  CL_YELLOW="\e[0;${YELLOW};49m"
+  CL_BROWN="\e[0;${YELLOW};49m"
+  CL_BLUE="\e[0;${BLUE};49m"
+  CL_MAG="\e[0;${MAG};49m"
+  CL_CYAN="\e[0;${CYAN};49m"
+  CL_GREY="\e[0;${GREY};49m"
+  CL_DARK="\e[0;${DARK};49m"
+  CL_BL_RED="\e[1;${RED};49m"
+  CL_BL_GREEN="\e[1;${GREEN};49m"
+  CL_BL_YELLOW="\e[1;${YELLOW};49m"
+  CL_BL_BROWN="\e[1;${YELLOW};49m"
+  CL_BL_BLUE="\e[1;${BLUE};49m"
+  CL_BL_MAG="\e[1;${MAG};49m"
+  CL_BL_CYAN="\e[1;${CYAN};49m"
+  CL_BL_GREY="\e[1;${GREY};49m"
+  CL_UL_RED="\e[4;${RED};49m"
+  CL_UL_GREEN="\e[4;${GREEN};49m"
+  CL_UL_YELLOW="\e[4;${YELLOW};49m"
+  CL_UL_BROWN="\e[4;${YELLOW};49m"
+  CL_UL_BLUE="\e[4;${BLUE};49m"
+  CL_UL_MAG="\e[4;${MAG};49m"
+  CL_UL_CYAN="\e[4;${CYAN};49m"
+  CL_UL_GREY="\e[4;${GREY};49m"
+  CL_BG_RED="\e[7;${RED};49m"
+  CL_BG_GREEN="\e[7;${GREEN};49m"
+  CL_BG_YELLOW="\e[7;${YELLOW};49m"
+  CL_BG_BROWN="\e[7;${YELLOW};49m"
+  CL_BG_BLUE="\e[7;${BLUE};49m"
+  CL_BG_MAG="\e[7;${MAG};49m"
+  CL_BG_CYAN="\e[7;${CYAN};49m"
+  CL_BG_GREY="\e[7;${GREY};49m"
 
   COLORS_ALLOWED=true
 fi
@@ -829,7 +834,7 @@ kv.showStatusMessage() {
   case $1 in
     $ACTION_OK)     kv.show "${CL_GREEN}OK${CL_NORM}" ;;
     $ACTION_ERROR)  kv.show "${CL_RED}ERROR${CL_NORM}" ;;
-    $ACTION_FORCED) kv.show "${CL_BROWN}FORCED${CL_NORM}" ;;
+    $ACTION_FORCED) kv.show "${CL_YELLOW}FORCED${CL_NORM}" ;;
   esac
 
   return "$1"
@@ -1171,14 +1176,14 @@ kv.exit() {
 # Code: No
 # Echo: No
 kv.disableColors() {
-  unset NORM BOLD UNLN RED GREEN BROWN BLUE MAG CYAN GREY DARK
-  unset CL_NORM CL_BOLD CL_UNLN CL_RED CL_GREEN CL_BROWN CL_BLUE CL_MAG CL_CYAN CL_GREY CL_DARK
-  unset CL_BL_RED CL_BL_GREEN CL_BL_BROWN CL_BL_BLUE CL_BL_MAG CL_BL_CYAN CL_BL_GREY
-  unset CL_UL_RED CL_UL_GREEN CL_UL_BROWN CL_UL_BLUE CL_UL_MAG CL_UL_CYAN CL_UL_GREY
-  unset CL_BG_RED CL_BG_GREEN CL_BG_BROWN CL_BG_BLUE CL_BG_MAG CL_BG_CYAN CL_BG_GREY
+  unset NORM BOLD UNLN RED GREEN YELLOW BLUE MAG CYAN GREY DARK
+  unset CL_NORM CL_BOLD CL_UNLN CL_RED CL_GREEN CL_YELLOW CL_BLUE CL_MAG CL_CYAN CL_GREY CL_DARK
+  unset CL_BL_RED CL_BL_GREEN CL_BL_YELLOW CL_BL_BLUE CL_BL_MAG CL_BL_CYAN CL_BL_GREY
+  unset CL_UL_RED CL_UL_GREEN CL_UL_YELLOW CL_UL_BLUE CL_UL_MAG CL_UL_CYAN CL_UL_GREY
+  unset CL_BG_RED CL_BG_GREEN CL_BG_YELLOW CL_BG_BLUE CL_BG_MAG CL_BG_CYAN CL_BG_GREY
 }
 
-# Show error message
+# Print error message
 #
 # 1: Message (String)
 # 2: Error code (Number) [Optional]
@@ -1190,14 +1195,14 @@ kv.disableColors() {
 # kv.error "My error message"
 # kv.error "My error message" 10
 kv.error() {
-  kv.show "$1" $RED
+  kv.show "$1" $RED 1>&2
 
   if [[ -n "$2" ]] ; then
     kv.exit "${2:-1}"
   fi
 }
 
-# Show warning message
+# Print warning message
 #
 # 1: Message (String)
 #
@@ -1206,7 +1211,7 @@ kv.error() {
 # Example:
 # kv.warn "My warning message"
 kv.warn() {
-  kv.show "$@" $BROWN
+  kv.show "$@" $YELLOW 1>&2
 }
 
 # Show message
@@ -1910,7 +1915,7 @@ kvStatus() {
   fi
 
   if [[ "$status" == "$STATUS_STOPPED" ]] ; then
-    kv.show "Service ${kv[prog_name]} is ${CL_BROWN}stopped${CL_NORM}"
+    kv.show "Service ${kv[prog_name]} is ${CL_YELLOW}stopped${CL_NORM}"
     return 3
   fi
 
@@ -1946,7 +1951,7 @@ kvUsage() {
   local comm_list=$(echo "${kv_comm[@]}" | sed 's/ /|/g')
 
   kv.show ""
-  kv.show "${CL_BOLD}Usage:${CL_NORM} service ${CL_BROWN}${kv[script]}${CL_NORM} ${CL_GREEN}{$comm_list}${CL_NORM}"
+  kv.show "${CL_BOLD}Usage:${CL_NORM} service ${CL_YELLOW}${kv[script]}${CL_NORM} ${CL_GREEN}{$comm_list}${CL_NORM}"
   kv.show ""
 
   local comm comm_args comm_desc comm_ctl
@@ -2080,7 +2085,7 @@ kvFixProblems() {
       [[ -n "$pid" ]] && echo "$pid" 1> "${kv[pid_file]}" 2> /dev/null
       [[ -n "${kv[user]}" ]] && chown "${kv[user]}:" "${kv[pid_file]}" &> /dev/null
 
-      kv.show "POSSIBLE FIXED" $BROWN
+      kv.show "POSSIBLE FIXED" $YELLOW
 
       continue
     fi
