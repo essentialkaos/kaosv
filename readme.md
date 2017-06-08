@@ -10,7 +10,6 @@ Documentation for latest version can be found [here](https://docs.kaos.io/kaosv/
 
 ### Examples
 
-* [beanstalkd](https://github.com/essentialkaos/kaos-repo/blob/master/beanstalkd/SOURCES/beanstalkd.init)
 * [ejabberd](https://github.com/essentialkaos/kaos-repo/blob/master/ejabberd/SOURCES/ejabberd.init)
 * [h2o](https://github.com/essentialkaos/kaos-repo/blob/master/h2o/SOURCES/h2o.init)
 * [memcached](https://github.com/essentialkaos/kaos-repo/blob/master/memcached/SOURCES/memcached.init)
