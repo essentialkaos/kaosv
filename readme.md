@@ -23,3 +23,5 @@ Documentation for latest version can be found [here](https://docs.kaos.io/kaosv/
 ### License
 
 [EKOL](https://essentialkaos.com/ekol)
+
+<p align="center"><a href="https://essentialkaos.com"><img src="https://gh.kaos.io/ekgh.svg"/></a></p>
