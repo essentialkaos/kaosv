@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.13.0"
+KV_VERSION="2.13.1"
 
 ###############################################################################
 
@@ -312,8 +312,6 @@ kv_pid="" # PID cache
 kv.go() {
   [[ $# -eq 0 || "$1" == "help" ]] && kvUsage && kv.exit $ACTION_OK
 
-  kvPrepare
-
   trap kv.exit SIGINT SIGTERM
 
   local comm="$1"
@@ -322,7 +320,11 @@ kv.go() {
 
   [[ -n "${kv_alias["$comm"]}" ]] && comm="${kv_alias["$comm"]}"
 
-  kvMkOutput
+  if [[ "$comm" != "status" ]] ; then
+    kvPrepare
+    kvMkOutput
+  fi
+
   kvRegisterBasicCommands
 
   local comm_handler="${kv_func["$comm"]}"

@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.13.0
+Version:         2.13.1
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Sat Aug 26 2017 Anton Novojilov <andy@essentialkaos.com> - 2.13.1-0
+- Minor improvements
+
 * Thu Apr 06 2017 Anton Novojilov <andy@essentialkaos.com> - 2.13.0-0
 - Output error and warning messages to stderr
 - Minor improvements
