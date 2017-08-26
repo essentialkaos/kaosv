@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.13.1"
+KV_VERSION="2.13.2"
 
 ###############################################################################
 
@@ -320,8 +320,10 @@ kv.go() {
 
   [[ -n "${kv_alias["$comm"]}" ]] && comm="${kv_alias["$comm"]}"
 
+  kvPrepare
+
   if [[ "$comm" != "status" ]] ; then
-    kvPrepare
+    kvCheck
     kvMkOutput
   fi
 
@@ -1325,6 +1327,20 @@ kv.log() {
 # Code: No
 # Echo: No
 kvPrepare() {
+  [[ -z "${kv[pid_file]}" ]] && kv[pid_file]="${kv[pid_dir]}/${kv[script]}.pid"
+  [[ -z "${kv[lock_file]}" ]] && kv[lock_file]="${kv[lock_dir]}/${kv[script]}"
+
+  kv[pid_dir]=$(dirname "${kv[pid_file]}")
+  kv[lock_dir]=$(dirname "${kv[lock_file]}")
+}
+
+# -
+#
+# Check preferencies before start
+#
+# Code: No
+# Echo: No
+kvCheck() {
   if [[ -z "${kv[prog_name]}" ]] ; then
     kv.error "Can't execute this init script. Please define prog_name value first." $ACTION_ERROR
   fi
@@ -1363,9 +1379,6 @@ kvPrepare() {
     fi
   fi
 
-  [[ -z "${kv[pid_file]}" ]] && kv[pid_file]="${kv[pid_dir]}/${kv[script]}.pid"
-  [[ -z "${kv[lock_file]}" ]] && kv[lock_file]="${kv[lock_dir]}/${kv[script]}"
-
   if [[ -n "${kv[log]}" ]] ; then
     local log_dir=$(dirname "${kv[log]}")
 
@@ -1381,9 +1394,6 @@ kvPrepare() {
       kv.error "Log file is not writable" $ACTION_ERROR
     fi
   fi
-
-  kv[pid_dir]=$(dirname "${kv[pid_file]}")
-  kv[lock_dir]=$(dirname "${kv[lock_file]}")
 
   if ! kvIsWellPath "${kv[pid_dir]}" ; then
     kv.error "Can't use PID dir <${kv[pid_dir]}>" $ACTION_ERROR
