@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.13.2"
+KV_VERSION="2.13.3"
 
 ###############################################################################
 
@@ -321,12 +321,6 @@ kv.go() {
   [[ -n "${kv_alias["$comm"]}" ]] && comm="${kv_alias["$comm"]}"
 
   kvPrepare
-
-  if [[ "$comm" != "status" ]] ; then
-    kvCheck
-    kvMkOutput
-  fi
-
   kvRegisterBasicCommands
 
   local comm_handler="${kv_func["$comm"]}"
@@ -338,6 +332,11 @@ kv.go() {
   if [[ -z ${kv_insec["$comm"]} ]] ; then
     kv.requireRoot
     kvCheckPaths
+  fi
+
+  if [[ "$comm" != "status" ]] ; then
+    kvCheck
+    kvMkOutput
   fi
 
   if [[ -n "${kv[auto_actions_log]}" ]] ; then
