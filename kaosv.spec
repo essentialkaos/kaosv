@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.13.3
+Version:         2.13.4
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Sat Oct 21 2017 Anton Novojilov <andy@essentialkaos.com> - 2.13.4-0
+- Added warning about unsupported handler name in kv.disableOutputRedirect
+
 * Tue Oct 17 2017 Anton Novojilov <andy@essentialkaos.com> - 2.13.3-0
 - Minor improvements
 

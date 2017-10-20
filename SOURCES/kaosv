@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.13.3"
+KV_VERSION="2.13.4"
 
 ###############################################################################
 
@@ -481,6 +481,11 @@ kv.addCommandVars() {
 kv.disableOutputRedirect() {
   local handler="$1"
   local htype="$2"
+
+  case $handler in
+    "start" | "stop" | "restart") ;;
+    *) kv.error "Handler \"$handler\" is can't be used in kv.disableOutputRedirect" ; kv.exit 1 ;;
+  esac
 
   if [[ -n "$htype" ]] ; then
     kv_dout["${handler}_${htype}"]=true
