@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1117
+# shellcheck disable=SC2015
+# shellcheck disable=SC2028
+# shellcheck disable=SC2034
+# shellcheck disable=SC2119
+# shellcheck disable=SC2120
+# shellcheck disable=SC2154
+# shellcheck disable=SC2181
 
 # KAOSv is bash lib for SysV init scripts.
 #
 # This lib can be used as replacement for default /etc/init.d/functions lib.
-#
 
 if [[ "$BASH" == "/bin/sh" ]] ; then
   bash "$0" "$@"
@@ -30,7 +37,6 @@ if [[ $(consoletype) == "pty" && -t 1 ]] ; then
   GREEN=32
   # Code for yellow color
   YELLOW=33
-  BROWN=33
   # Code for blue color
   BLUE=34
   # Code for magenta color
@@ -41,6 +47,8 @@ if [[ $(consoletype) == "pty" && -t 1 ]] ; then
   GREY=37
   # Code for dark grey color
   DARK=90
+
+  BROWN=33
 
   CL_NORM="\e[0m"
   CL_BOLD="\e[0;${BOLD};49m"
@@ -362,7 +370,10 @@ kv.go() {
 kv.require() {
   [[ $# -eq 0 ]] && return
 
+  # shellcheck disable=SC2206
   local cur_ver=(${KV_VERSION//./ })
+  
+  # shellcheck disable=SC2206
   local req_ver=(${1//./ })
 
   for i in $(seq 0 2) ; do
@@ -528,6 +539,7 @@ kv.readSysconfig() {
     kv.error "Can't read sysconfig file - owner is not root" && return 1
   fi
 
+  # shellcheck disable=SC1090
   source "$SYSCONFIG_DIR/$conf"
 }
 
@@ -811,6 +823,7 @@ kv.findPid() {
 
   local pattern="${1:-${kv[search_pattern]}}"
 
+  # shellcheck disable=SC2009
   ps ax -o pid,cmd | grep -E -v "$PROCESS_EXCLUDE_PATTERN" | grep "\\$pattern" | tr -s " " | cut -f1 -d" " | head -1
 }
 
@@ -864,13 +877,13 @@ kv.getStartStatus() {
   local cpid_file="${1:-${kv[pid_file]}}"
   local no_check_proc="$2"
 
-  local i
+  local i pid
 
   for i in $(seq 1 "${kv[delay_start]:-15}") ; do
     if [[ -f $cpid_file && -r $cpid_file ]] ; then
       [[ -n "$no_check_proc" ]] && return $ACTION_OK
 
-      local pid=$(head -1 "$cpid_file")
+      pid=$(head -1 "$cpid_file")
 
       if kv.isProcExist "$pid" ; then
         return $ACTION_OK
@@ -1048,8 +1061,9 @@ kv.sendSignal() {
   [[ $# -eq 0 ]] && return 1
 
   local signal="$1"
+  local pid
 
-  [[ -n "$2" ]] && local pid="$2" || local pid=$(kv.getPid)
+  [[ -n "$2" ]] && pid="$2" || pid=$(kv.getPid)
   [[ -z "$pid" || -z "$signal" ]] && return 1
 
   kill "-${signal}" "$pid" >/dev/null 2>&1
@@ -1384,7 +1398,9 @@ kvCheck() {
   fi
 
   if [[ -n "${kv[log]}" ]] ; then
-    local log_dir=$(dirname "${kv[log]}")
+    local log_dir
+
+    log_dir=$(dirname "${kv[log]}")
 
     if ! kvIsWellPath "$log_dir" ; then
       kv.error "Can't execute this init script. Property log contains wrong path (${kv[log]})." $ACTION_ERROR
@@ -1518,7 +1534,7 @@ kvGetUserLimit() {
   local lm_user lm_type lm_item lm_value
 
   while read -r rec ; do
-    read -r -a reca <<<$rec
+    read -r -a reca <<< "$rec"
 
     lm_user="${reca[0]}"
     lm_type="${reca[1]}"
@@ -1560,7 +1576,7 @@ kvListLimits() {
   limit_confs=$(find /etc/security/limits.d -type f -name "*.conf" | sort | tr "\n" " ")
   limit_confs="/etc/security/limits.conf ${limit_confs}"
 
-  cat $limit_confs 2>/dev/null | grep -v "^#" | sed '/^\s*$/d' | tr "\t" " " | tr -s " "
+  grep -v "^#" "$limit_confs" 2>/dev/null | sed '/^\s*$/d' | tr "\t" " " | tr -s " "
 }
 
 # -
@@ -1689,7 +1705,9 @@ kvStart() {
 
   kvCheckPaths
 
-  local status=$(kv.getStatus)
+  local status
+
+  status=$(kv.getStatus)
 
   if [[ "$status" == "$STATUS_RUNNING" ]] ; then
     kv.warn "Service already running"
@@ -1751,7 +1769,9 @@ kvStop() {
 
   kvCheckPaths
 
-  local status=$(kv.getStatus)
+  local status
+
+  status=$(kv.getStatus)
 
   if [[ "$status" == "$STATUS_STOPPED" ]] ; then
     kv.warn "Service already stopped"
@@ -1922,10 +1942,12 @@ kvFixIfNotInStatus() {
 # Code: Yes
 # Echo: No
 kvStatus() {
-  local status=$(kv.getStatus)
+  local status pid
+
+  status=$(kv.getStatus)
 
   if [[ "$status" == "$STATUS_RUNNING" ]] ; then
-    local pid=$(kv.getPid)
+    pid=$(kv.getPid)
     kv.show "Service ${kv[prog_name]} ${CL_DARK}[${pid}]${CL_NORM} is ${CL_GREEN}running${CL_NORM}"
     return $ACTION_OK
   fi
@@ -1964,13 +1986,13 @@ kvStatus() {
 kvUsage() {
   [[ -n ${kv[auto_info]} ]] && kvAppendBasicCommands
 
-  local comm_list=$(echo "${kv_comm[@]}" | sed 's/ /|/g')
+  local comm_list comm comm_args comm_desc comm_ctl comm_tld
+
+  comm_list="${kv_comm[*]// /|}"
 
   kv.show ""
   kv.show "${CL_BOLD}Usage:${CL_NORM} service ${CL_YELLOW}${kv[script]}${CL_NORM} ${CL_GREEN}{$comm_list}${CL_NORM}"
   kv.show ""
-
-  local comm comm_args comm_desc comm_ctl
 
   local comm_tl=0
 
@@ -1988,7 +2010,7 @@ kvUsage() {
     comm_args="${kv_args["$comm"]}"
 
     if [[ -n "$comm_args" ]] ; then
-      local comm_tld=$(($comm_tl - ${#comm} - 1))
+      comm_tld=$(( comm_tl - ${#comm} - 1))
       printf "  ${CL_GREEN}%-${#comm}s${CL_NORM} ${CL_GREY}%-${comm_tld}s${CL_NORM} %s\n" "$comm" "$comm_args" "$comm_desc"
     else
       printf "  ${CL_GREEN}%-${comm_tl}s${CL_NORM} %s\n" "$comm" "$comm_desc"
@@ -2014,7 +2036,7 @@ kvAppendBasicCommands() {
   [[ -z "${kv_desc[restart]}" ]] && kv.addCommand "restart" "Restart (stop+start) ${kv[prog_name]} service"
   [[ -z "${kv_desc[status]}" ]] && kv.addCommand "status" "Show current status of ${kv[prog_name]}"
 
-  kv_comm+=(${kv_comm_old})
+  kv_comm+=("${kv_comm_old}")
 
   [[ -z "${kv_desc[help]}" ]] && kv.addCommand "help" "Show this information"
 }
@@ -2050,8 +2072,10 @@ kvFixProblems() {
     return
   fi
 
+  local status pid
+
   while : ; do
-    local status=$(kv.getStatus)
+    status=$(kv.getStatus)
 
     if [[ $status -eq $STATUS_DEAD_WITH_PID ]] ; then
       kv.showm "Removing PID file: "
@@ -2070,7 +2094,7 @@ kvFixProblems() {
     elif [[ $status -eq $STATUS_NO_PID ]] ; then
       kv.showm "Restoring PID file: "
 
-      local pid=$(kv.findPid)
+      pid=$(kv.findPid)
       [[ -z "$pid" ]] && kv.showStatusMessage $ACTION_ERROR && return
 
       echo "$pid" 1> "${kv[pid_file]}" 2> /dev/null
@@ -2096,7 +2120,7 @@ kvFixProblems() {
 
       [[ -f "${kv[pid_file]}" && ! -s "${kv[pid_file]}" ]] && rm -f "${kv[pid_file]}" &> /dev/null
 
-      local pid=$(kv.findPid)
+      pid=$(kv.findPid)
 
       [[ -n "$pid" ]] && echo "$pid" 1> "${kv[pid_file]}" 2> /dev/null
       [[ -n "${kv[user]}" ]] && chown "${kv[user]}:" "${kv[pid_file]}" &> /dev/null
@@ -2156,7 +2180,7 @@ kvSendOutputToLogger() {
     if [[ -n "${kv[log]}" ]] ; then
       cat "${kv[output]}" 1> "${kv[log]}" 2>/dev/null
     else
-      cat "${kv[output]}" | logger -i -t "${kv[prog_name]}(kaosv)"
+      logger -i -t "${kv[prog_name]}(kaosv)" < "${kv[output]}"
     fi
   fi
 
@@ -2172,8 +2196,10 @@ kvSendOutputToLogger() {
 # Code: No
 # Echo: Boot date (Number)
 kvGetBootTimestamp() {
-  local upt=$(cat "/proc/uptime" | cut -f1 -d".")
-  local now=$(date +%s)
+  local upt now
+
+  upt=$(cut -f1 -d"." < "/proc/uptime")
+  now=$(date +%s)
 
   echo $(( now - upt ))
 }
