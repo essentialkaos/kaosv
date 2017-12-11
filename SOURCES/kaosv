@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.13.4"
+KV_VERSION="2.13.5"
 
 ###############################################################################
 
@@ -289,7 +289,7 @@ kv[supervisor]=""
 kv[script]=$(readlink -f "$0" | xargs -n1 basename)
 
 # Real user name (search real user name over sudo) (String)
-kv[real_user]=$(who -m | cut -f1 -d" " | egrep "[a-z]" || echo "root")
+kv[real_user]=$(who -m | cut -f1 -d" " | grep -E "[a-z]" || echo "root")
 
 # Temporary file for service output (can be only set to /dev/null)
 kv[output]=""
@@ -811,7 +811,7 @@ kv.findPid() {
 
   local pattern="${1:-${kv[search_pattern]}}"
 
-  ps ax -o pid,cmd | egrep -v "$PROCESS_EXCLUDE_PATTERN" | grep "\\$pattern" | tr -s " " | cut -f1 -d" " | head -1
+  ps ax -o pid,cmd | grep -E -v "$PROCESS_EXCLUDE_PATTERN" | grep "\\$pattern" | tr -s " " | cut -f1 -d" " | head -1
 }
 
 # Show message about action in progress
@@ -960,7 +960,7 @@ kv.isProcExist() {
 #   kv.error "User serviceuser doesn't exist!"
 # fi
 kv.hasUser() {
-  if egrep -q "^$1:" /etc/passwd ; then
+  if grep -q -E "^$1:" /etc/passwd ; then
     return 0
   fi
 
@@ -980,7 +980,7 @@ kv.hasUser() {
 # fi
 kv.isBoundPort() {
   [[ $# -eq 0 ]] && return 1
-  [[ $(netstat -antu | tr -s " " | cut -f4 -d" " | sed 's/:.*:/:/g' | cut -f2 -d":" | egrep "^$1$" | head -1) ]] && return 0 || return 1
+  [[ $(netstat -antu | tr -s " " | cut -f4 -d" " | sed 's/:.*:/:/g' | cut -f2 -d":" | grep -E "^$1$" | head -1) ]] && return 0 || return 1
 }
 
 # Check that service is works
