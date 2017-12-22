@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2034
 
 ################################################################################
 
 APP="KAOSv Supervisor"
-VER="1.1.0"
+VER="1.1.1"
 
 INIT_DIR="/etc/init.d"
 
