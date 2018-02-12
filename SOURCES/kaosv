@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.13.5"
+KV_VERSION="2.13.6"
 
 ###############################################################################
 
@@ -1201,7 +1201,6 @@ kv.disableColors() {
 # Print error message
 #
 # 1: Message (String)
-# 2: Error code (Number) [Optional]
 #
 # Code: No
 # Echo: No
@@ -1211,10 +1210,6 @@ kv.disableColors() {
 # kv.error "My error message" 10
 kv.error() {
   kv.show "$1" $RED 1>&2
-
-  if [[ -n "$2" ]] ; then
-    kv.exit "${2:-1}"
-  fi
 }
 
 # Print warning message
