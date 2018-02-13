@@ -83,7 +83,7 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
-* Mon Feb 12 2018 Anton Novojilov <andy@essentialkaos.com> - 2.13.6-0
+* Mon Feb 12 2018 Anton Novojilov <andy@essentialkaos.com> - 2.14.0-0
 - Fixed bug with searching PID
 - Removed unclear part with exiting from script inside kv.error method
 
