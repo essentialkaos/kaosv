@@ -1227,7 +1227,6 @@ kv.disableColors() {
 #
 # Example:
 # kv.error "My error message"
-# kv.error "My error message" 10
 kv.error() {
   kv.show "$1" $RED 1>&2
 }
