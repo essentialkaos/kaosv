@@ -822,7 +822,7 @@ kv.findPID() {
   local pattern="${1:-${kv[search_pattern]}}"
 
   # shellcheck disable=SC2009
-  ps ax -o pid,cmd | grep -E -v "$PROCESS_EXCLUDE_PATTERN" | grep "\\$pattern" | tr -s " " | cut -f1 -d" " | head -1
+  ps ax -o pid,cmd | grep -E -v "$PROCESS_EXCLUDE_PATTERN" | grep "\\$pattern" | tr -s " " | sed 's/^ //' | cut -f1 -d" " | head -1
 }
 
 # -
