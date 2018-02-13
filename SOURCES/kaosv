@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.13.5"
+KV_VERSION="2.14.0"
 
 ###############################################################################
 
@@ -197,7 +197,7 @@ CRON_DIR="/etc/cron.d"
 
 SUPERVISOR="/usr/local/share/kaosv/supervisor"
 
-PROCESS_EXCLUDE_PATTERN="^([0-9 ]{1,5}) (grep|egrep|service|/bin/grep|/bin/egrep|/sbin/service|/etc/init\.d|/etc/rc\.d/init\.d)"
+PROCESS_EXCLUDE_PATTERN="^([0-9 ]{1,6}) (grep|egrep|service|/bin/grep|/bin/egrep|/sbin/service|/etc/init\.d|/etc/rc\.d/init\.d)"
 
 ###############################################################################
 
@@ -365,7 +365,7 @@ kv.require() {
 
   # shellcheck disable=SC2206
   local cur_ver=(${KV_VERSION//./ })
-  
+
   # shellcheck disable=SC2206
   local req_ver=(${1//./ })
 
@@ -754,7 +754,7 @@ kv.getStatus() {
       echo $STATUS_DEAD_WITH_PID && return
     fi
 
-    pid=$(kv.getPid)
+    pid=$(kv.getPID)
 
     [[ -z "$pid" ]] && echo $STATUS_BROKEN && return
 
@@ -768,7 +768,7 @@ kv.getStatus() {
       echo $STATUS_DEAD_WITH_PID && return
     fi
   else
-    pid=$(kv.findPid)
+    pid=$(kv.findPID)
 
     if [[ -n "$pid" ]] ; then
       if [[ ! -f ${kv[pid_file]} ]] ; then
@@ -789,17 +789,22 @@ kv.getStatus() {
 # Get or find PID
 #
 # Code: No
-# Echo: Pid (Number)
+# Echo: PID (Number)
 #
 # Example:
-# local pid=$(kv.getPid)
+# local pid=$(kv.getPID)
 # kv.sendSignal $pid
-kv.getPid() {
+kv.getPID() {
   if [[ -f "${kv[pid_file]}" && -r "${kv[pid_file]}" ]] ; then
     cat "${kv[pid_file]}"
   else
-    kv.findPid
+    kv.findPID
   fi
+}
+
+# -
+kv.getPid() {
+  kv.getPID "$@"
 }
 
 # Find PID for service
@@ -807,17 +812,22 @@ kv.getPid() {
 # 1: Search pattern (String) [Optional]
 #
 # Code: No
-# Echo: Pid (Number)
+# Echo: PID (Number)
 #
 # Example:
-# local pid=$(kv.findPid "service -c /etc/config.conf")
-kv.findPid() {
+# local pid=$(kv.findPID "service -c /etc/config.conf")
+kv.findPID() {
   [[ -z "${kv[auto_pid_search]}" && -z "$1" ]] && return
 
   local pattern="${1:-${kv[search_pattern]}}"
 
   # shellcheck disable=SC2009
-  ps ax -o pid,cmd | grep -E -v "$PROCESS_EXCLUDE_PATTERN" | grep "\\$pattern" | tr -s " " | cut -f1 -d" " | head -1
+  ps ax -o pid,cmd | grep -E -v "$PROCESS_EXCLUDE_PATTERN" | grep "\\$pattern" | tr -s " " | sed 's/^ //' | cut -f1 -d" " | head -1
+}
+
+# -
+kv.findPid() {
+  kv.findPID "$@"
 }
 
 # Show message about action in progress
@@ -891,7 +901,7 @@ kv.getStartStatus() {
 
 # Get status of stopping service
 #
-# 1: Pid (Number) [Optional]
+# 1: PID (Number) [Optional]
 #
 # Code: Status (Boolean)
 # Echo: No
@@ -923,25 +933,25 @@ kv.getStopStatus() {
 
 # Kill service process
 #
-# 1: Pid (Number) [Optional]
+# 1: PID (Number) [Optional]
 #
 # Code: No
 # Echo: No
 kv.killProcess() {
   local pid="$1"
 
-  [[ -z "$pid" ]] && pid=$(kv.findPid)
+  [[ -z "$pid" ]] && pid=$(kv.findPID)
   [[ -z "$pid" ]] && return 1
 
   kill -KILL "$pid" >/dev/null 2>&1
 
   kv.removeLock
-  kv.removePid
+  kv.removePID
 }
 
 # Return 0 if process with specified PID exist
 #
-# 1: Pid (Number)
+# 1: PID (Number)
 #
 # Code: Yes
 # Echo: No
@@ -1041,7 +1051,7 @@ kv.isInstalled() {
 # Send a signal to service
 #
 # 1: Signal (String)
-# 2: Pid (Number) [Optional]
+# 2: PID (Number) [Optional]
 #
 # Code: Yes
 # Echo: No
@@ -1056,7 +1066,7 @@ kv.sendSignal() {
   local signal="$1"
   local pid
 
-  [[ -n "$2" ]] && pid="$2" || pid=$(kv.getPid)
+  [[ -n "$2" ]] && pid="$2" || pid=$(kv.getPID)
   [[ -z "$pid" || -z "$signal" ]] && return 1
 
   kill "-${signal}" "$pid" >/dev/null 2>&1
@@ -1078,7 +1088,7 @@ kv.setOOMScoreAdj() {
   local pid="$2"
 
   [[ -z "$adj" ]] && return 1
-  [[ -z "$pid" ]] && pid=$(kv.getPid)
+  [[ -z "$pid" ]] && pid=$(kv.getPID)
   [[ -z "$pid" ]] && return 1
 
   echo "$adj" 1> "/proc/$pid/oom_score_adj" 2>/dev/null
@@ -1149,23 +1159,33 @@ kv.hasLock() {
 
 # Create PID file
 #
-# 1: Pid (Number)
+# 1: PID (Number)
 #
 # Code: No
 # Echo: No
 #
 # Example:
-# kv.createPid 12345
-kv.createPid() {
+# kv.createPIDFile 12345
+kv.createPIDFile() {
   echo "$1" 1> "${kv[pid_file]}" 2>/dev/null
+}
+
+# -
+kv.createPid() {
+  kv.createPIDFile "$@"
 }
 
 # Remove PID file
 #
 # Code: No
 # Echo: No
-kv.removePid() {
+kv.removePIDFile() {
   rm -f "${kv[pid_file]}" &> /dev/null
+}
+
+# -
+kv.removePid() {
+  kv.removePIDFile "$@"
 }
 
 # Exit from the script
@@ -1201,20 +1221,14 @@ kv.disableColors() {
 # Print error message
 #
 # 1: Message (String)
-# 2: Error code (Number) [Optional]
 #
 # Code: No
 # Echo: No
 #
 # Example:
 # kv.error "My error message"
-# kv.error "My error message" 10
 kv.error() {
   kv.show "$1" $RED 1>&2
-
-  if [[ -n "$2" ]] ; then
-    kv.exit "${2:-1}"
-  fi
 }
 
 # Print warning message
@@ -1636,7 +1650,7 @@ kvCheckPaths() {
     kv.error "Lock dir <${kv[lock_dir]}> is not writable" $ACTION_ERROR
   fi
    if [[ ! -w "${kv[pid_dir]}" ]] ; then
-    kv.error "Pid dir <${kv[pid_dir]}> is not writable" $ACTION_ERROR
+    kv.error "PID dir <${kv[pid_dir]}> is not writable" $ACTION_ERROR
   fi
 }
 
@@ -1785,7 +1799,7 @@ kvStop() {
 
   [[ $retcode -ne 0 ]] && return $retcode
 
-  kv_pid=$(kv.getPid)
+  kv_pid=$(kv.getPID)
 
   kv.showProcessMessage "Stopping ${kv[prog_name]}"
   kvExecDefHandler "stop" "" "$@" &>> "${kv[output]}"
@@ -1805,7 +1819,7 @@ kvStop() {
     [[ -n "${kv[supervisor]}" ]] && kvRemoveSupervisorCron
   fi
 
-  [[ $retcode -eq 0 && -f ${kv[pid_file]} ]] && kv.removePid
+  [[ $retcode -eq 0 && -f ${kv[pid_file]} ]] && kv.removePIDFile
 
   if [[ -n "${kv[auto_actions_log]}" ]] ; then
     if [[ $retcode -eq 0 ]] ; then
@@ -1940,7 +1954,7 @@ kvStatus() {
   status=$(kv.getStatus)
 
   if [[ "$status" == "$STATUS_RUNNING" ]] ; then
-    pid=$(kv.getPid)
+    pid=$(kv.getPID)
     kv.show "Service ${kv[prog_name]} ${CL_DARK}[${pid}]${CL_NORM} is ${CL_GREEN}running${CL_NORM}"
     return $ACTION_OK
   fi
@@ -2087,7 +2101,7 @@ kvFixProblems() {
     elif [[ $status -eq $STATUS_NO_PID ]] ; then
       kv.showm "Restoring PID file: "
 
-      pid=$(kv.findPid)
+      pid=$(kv.findPID)
       [[ -z "$pid" ]] && kv.showStatusMessage $ACTION_ERROR && return
 
       echo "$pid" 1> "${kv[pid_file]}" 2> /dev/null
@@ -2113,7 +2127,7 @@ kvFixProblems() {
 
       [[ -f "${kv[pid_file]}" && ! -s "${kv[pid_file]}" ]] && rm -f "${kv[pid_file]}" &> /dev/null
 
-      pid=$(kv.findPid)
+      pid=$(kv.findPID)
 
       [[ -n "$pid" ]] && echo "$pid" 1> "${kv[pid_file]}" 2> /dev/null
       [[ -n "${kv[user]}" ]] && chown "${kv[user]}:" "${kv[pid_file]}" &> /dev/null
