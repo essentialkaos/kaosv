@@ -1,6 +1,6 @@
 <p align="center"><a href="#documentation">Documentation</a> • <a href="#examples">Examples</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
 
-<p align="center"><a href="#readme"><img src="https://gh.kaos.io/kaosv.svg"/></a></p>
+<p align="center"><a href="#readme"><img src="https://gh.kaos.st/kaosv.svg"/></a></p>
 
 `kaosv` is bash lib for SysV init scripts.
 
@@ -8,7 +8,7 @@
 
 KAOSv contain inline documentation in shdoc format.
 
-Documentation for latest version can be found [here](https://docs.kaos.io/kaosv/latest/). Also you can use [SHDoc](https://github.com/essentialkaos/shdoc) utility for viewing inline docs in your console.
+Documentation for latest version can be found [here](https://docs.kaos.st/kaosv/latest/). Also you can use [SHDoc](https://github.com/essentialkaos/shdoc) utility for viewing inline docs in your console.
 
 ### Examples
 
@@ -32,4 +32,4 @@ Documentation for latest version can be found [here](https://docs.kaos.io/kaosv/
 
 [EKOL](https://essentialkaos.com/ekol)
 
-<p align="center"><a href="https://essentialkaos.com"><img src="https://gh.kaos.io/ekgh.svg"/></a></p>
+<p align="center"><a href="https://essentialkaos.com"><img src="https://gh.kaos.st/ekgh.svg"/></a></p>

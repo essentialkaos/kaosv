@@ -34,14 +34,14 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.13.6
+Version:         2.14.0
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
 URL:             https://github.com/essentialkaos/kaosv
 Vendor:          ESSENTIAL KAOS
 
-Source0:         https://source.kaos.io/%{name}/%{name}-%{version}.tar.bz2
+Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
 
 BuildArch:       noarch
 BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -84,6 +84,7 @@ rm -rf %{buildroot}
 
 %changelog
 * Mon Feb 12 2018 Anton Novojilov <andy@essentialkaos.com> - 2.13.6-0
+- Fixed bug with searching PID
 - Removed unclear part with exiting from script inside kv.error method
 
 * Mon Dec 11 2017 Anton Novojilov <andy@essentialkaos.com> - 2.13.5-0
