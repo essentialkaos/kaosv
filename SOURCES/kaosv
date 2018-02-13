@@ -197,7 +197,7 @@ CRON_DIR="/etc/cron.d"
 
 SUPERVISOR="/usr/local/share/kaosv/supervisor"
 
-PROCESS_EXCLUDE_PATTERN="^([0-9 ]{1,5}) (grep|egrep|service|/bin/grep|/bin/egrep|/sbin/service|/etc/init\.d|/etc/rc\.d/init\.d)"
+PROCESS_EXCLUDE_PATTERN="^([0-9 ]{1,6}) (grep|egrep|service|/bin/grep|/bin/egrep|/sbin/service|/etc/init\.d|/etc/rc\.d/init\.d)"
 
 ###############################################################################
 
