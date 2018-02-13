@@ -1,6 +1,11 @@
+<p align="center"><a href="#readme"><img src="https://gh.kaos.st/kaosv.svg"/></a></p>
+
 <p align="center"><a href="#documentation">Documentation</a> • <a href="#examples">Examples</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
 
-<p align="center"><a href="#readme"><img src="https://gh.kaos.st/kaosv.svg"/></a></p>
+<p align="center">
+  <a href="https://travis-ci.org/essentialkaos/kaosv"><img src="https://travis-ci.org/essentialkaos/kaosv.svg"></a>
+  <a href="#license"><img src="https://gh.kaos.st/ekol.svg"></a>
+</p>
 
 `kaosv` is bash lib for SysV init scripts.
 
