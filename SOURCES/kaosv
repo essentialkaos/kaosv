@@ -803,7 +803,7 @@ kv.getPID() {
 }
 
 # -
-func kv.getPid() {
+kv.getPid() {
   kv.getPID "$@"
 }
 
