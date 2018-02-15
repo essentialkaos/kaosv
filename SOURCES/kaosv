@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.14.0"
+KV_VERSION="2.14.1"
 
 ###############################################################################
 
@@ -327,7 +327,8 @@ kv.go() {
   local comm_handler="${kv_func["$comm"]}"
 
   if ! kvIsFuncExist "$comm_handler" ; then
-    kv.error "Can't find handler for command $comm" $ACTION_ERROR
+    kv.error "Can't find handler for command $comm"
+    kv.exit $ACTION_ERROR
   fi
 
   if [[ -z ${kv_insec["$comm"]} ]] ; then
@@ -376,6 +377,7 @@ kv.require() {
 
     if [[ ${req_ver[$i]} -gt ${cur_ver[$i]} ]] ; then
       kv.error "Init script requires kaosv $1 or higher"
+      kv.exit $ACTION_ERROR
     fi
   done
 }
@@ -488,7 +490,7 @@ kv.disableOutputRedirect() {
 
   case $handler in
     "start" | "stop" | "restart") ;;
-    *) kv.error "Handler \"$handler\" is can't be used in kv.disableOutputRedirect" ; kv.exit 1 ;;
+    *) kv.error "Handler \"$handler\" is can't be used in kv.disableOutputRedirect" ; kv.exit $ACTION_ERROR ;;
   esac
 
   if [[ -n "$htype" ]] ; then
@@ -720,7 +722,8 @@ kv.usage() {
 # Echo: No
 kv.requireRoot() {
   if ! kv.isRoot ; then
-    kv.error "You must have root privileges to use this command" $ACTION_ERROR
+    kv.error "You must have root privileges to use this command"
+    kv.exit $ACTION_ERROR
   fi
 }
 
@@ -1367,40 +1370,48 @@ kvPrepare() {
 # Echo: No
 kvCheck() {
   if [[ -z "${kv[prog_name]}" ]] ; then
-    kv.error "Can't execute this init script. Please define prog_name value first." $ACTION_ERROR
+    kv.error "Can't execute this init script. Please define prog_name value first"
+    kv.exit $ACTION_ERROR
   fi
 
   if [[ -n "${kv[auto_pid_search]}" && -z "${kv[search_pattern]}" ]] ; then
-    kv.error "Can't execute this init script. Please define \"search_pattern\" property first." $ACTION_ERROR
+    kv.error "Can't execute this init script. Please define \"search_pattern\" property first"
+    kv.exit $ACTION_ERROR
   fi
 
   if ! kvIsWellPath "${kv[pid_dir]}" ; then
-    kv.error "Can't execute this init script. Property \"pid_dir\" contains the wrong path (${kv[pid_dir]})." $ACTION_ERROR
+    kv.error "Can't execute this init script. Property \"pid_dir\" contains the wrong path (${kv[pid_dir]})"
+    kv.exit $ACTION_ERROR
   fi
 
   if ! kvIsWellPath "${kv[lock_dir]}" ; then
-    kv.error "Can't execute this init script. Property \"lock_dir\" contains the wrong path (${kv[lock_dir]})." $ACTION_ERROR
+    kv.error "Can't execute this init script. Property \"lock_dir\" contains the wrong path (${kv[lock_dir]})"
+    kv.exit $ACTION_ERROR
   fi
 
   if [[ -n "${kv[output]}" ]] ; then
     if ! kvIsWellPath "${kv[output]}" ; then
-      kv.error "Can't execute this init script. Property \"output\" contains the wrong path (${kv[output]})." $ACTION_ERROR
+      kv.error "Can't execute this init script. Property \"output\" contains the wrong path (${kv[output]})"
+      kv.exit $ACTION_ERROR
     fi
   fi
 
   if [[ -n "${kv[dir]}" ]] ; then
     if ! kvIsWellPath "${kv[dir]}" ; then
-      kv.error "Can't execute this init script. Property \"dir\" contains the wrong path (${kv[dir]})." $ACTION_ERROR
+      kv.error "Can't execute this init script. Property \"dir\" contains the wrong path (${kv[dir]})"
+      kv.exit $ACTION_ERROR
     fi
 
     if [[ ! -d ${kv[dir]} ]] ; then
-      kv.error "Can't execute this init script. Service directory <${kv[dir]}> doesn't exist." $ACTION_ERROR
+      kv.error "Can't execute this init script. Service directory <${kv[dir]}> doesn't exist"
+      kv.exit $ACTION_ERROR
     fi
   fi
 
   if [[ -n "${kv[user]}" ]] ; then
     if ! kv.hasUser "${kv[user]}" ; then
-      kv.error "User <${kv[user]}> doesn't exist" $ACTION_ERROR
+      kv.error "User <${kv[user]}> doesn't exist"
+      kv.exit $ACTION_ERROR
     fi
   fi
 
@@ -1410,24 +1421,29 @@ kvCheck() {
     log_dir=$(dirname "${kv[log]}")
 
     if ! kvIsWellPath "$log_dir" ; then
-      kv.error "Can't execute this init script. Property log contains wrong path (${kv[log]})." $ACTION_ERROR
+      kv.error "Can't execute this init script. Property log contains wrong path (${kv[log]})."
+      kv.exit $ACTION_ERROR
     fi
 
     if [[ ! -d "$log_dir" ]] ; then
-      kv.error "Log file directory <$log_dir> doesn't exist" $ACTION_ERROR
+      kv.error "Log file directory <$log_dir> doesn't exist"
+      kv.exit $ACTION_ERROR
     fi
 
     if [[ -f "${kv[log]}" && ! -w "${kv[log]}" ]] ; then
-      kv.error "Log file is not writable" $ACTION_ERROR
+      kv.error "Log file is not writable"
+      kv.exit $ACTION_ERROR
     fi
   fi
 
   if ! kvIsWellPath "${kv[pid_dir]}" ; then
-    kv.error "Can't use PID dir <${kv[pid_dir]}>" $ACTION_ERROR
+    kv.error "Can't use PID dir <${kv[pid_dir]}>"
+    kv.exit $ACTION_ERROR
   fi
 
   if ! kvIsWellPath "${kv[lock_dir]}" ; then
-    kv.error "Can't use lock dir <${kv[lock_dir]}>" $ACTION_ERROR
+    kv.error "Can't use lock dir <${kv[lock_dir]}>"
+    kv.exit $ACTION_ERROR
   fi
 }
 
@@ -1632,7 +1648,8 @@ kvCheckPaths() {
     if [[ -n "${kv[user]}" && "${kv[user]}" != $(kvGetOwner "${kv[pid_dir]}") ]] ; then
       if kv.isRoot ; then
         if ! kv.hasUser "${kv[user]}" ; then
-          kv.error "Can't change owner for PID directory <${kv[pid_dir]}> - user <${kv[user]}> not exist on the system" $ACTION_ERROR
+          kv.error "Can't change owner for PID directory <${kv[pid_dir]}> - user <${kv[user]}> not exist on the system"
+          kv.exit $ACTION_ERROR
         fi
 
         chown "${kv[user]}" "${kv[pid_dir]}"
@@ -1647,10 +1664,12 @@ kvCheckPaths() {
   fi
 
   if [[ ! -w "${kv[lock_dir]}" ]] ; then
-    kv.error "Lock dir <${kv[lock_dir]}> is not writable" $ACTION_ERROR
+    kv.error "Lock dir <${kv[lock_dir]}> is not writable"
+    kv.exit $ACTION_ERROR
   fi
    if [[ ! -w "${kv[pid_dir]}" ]] ; then
-    kv.error "PID dir <${kv[pid_dir]}> is not writable" $ACTION_ERROR
+    kv.error "PID dir <${kv[pid_dir]}> is not writable"
+    kv.exit $ACTION_ERROR
   fi
 }
 
@@ -1995,7 +2014,8 @@ kvUsage() {
 
   local comm_list comm comm_args comm_desc comm_ctl comm_tld
 
-  comm_list="${kv_comm[*]// /|}"
+  comm_list="${kv_comm[*]}"
+  comm_list="${comm_list// /|}"
 
   kv.show ""
   kv.show "${CL_BOLD}Usage:${CL_NORM} service ${CL_YELLOW}${kv[script]}${CL_NORM} ${CL_GREEN}{$comm_list}${CL_NORM}"
@@ -2043,7 +2063,8 @@ kvAppendBasicCommands() {
   [[ -z "${kv_desc[restart]}" ]] && kv.addCommand "restart" "Restart (stop+start) ${kv[prog_name]} service"
   [[ -z "${kv_desc[status]}" ]] && kv.addCommand "status" "Show current status of ${kv[prog_name]}"
 
-  kv_comm+=("${kv_comm_old}")
+  # shellcheck disable=SC2206
+  kv_comm+=($kv_comm_old)
 
   [[ -z "${kv_desc[help]}" ]] && kv.addCommand "help" "Show this information"
 }
