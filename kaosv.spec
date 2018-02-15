@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.14.0
+Version:         2.14.1
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -83,6 +83,10 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Thu Feb 15 2018 Anton Novojilov <andy@essentialkaos.com> - 2.14.1-0
+- Fixed bug with lack of exiting from script on error
+- Code refactoring
+
 * Mon Feb 12 2018 Anton Novojilov <andy@essentialkaos.com> - 2.14.0-0
 - Fixed bug with searching PID
 - Removed unclear part with exiting from script inside kv.error method
