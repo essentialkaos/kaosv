@@ -2014,7 +2014,8 @@ kvUsage() {
 
   local comm_list comm comm_args comm_desc comm_ctl comm_tld
 
-  comm_list="${kv_comm[*]// /|}"
+  comm_list="${kv_comm[*]}"
+  comm_list="${comm_list// /|}"
 
   kv.show ""
   kv.show "${CL_BOLD}Usage:${CL_NORM} service ${CL_YELLOW}${kv[script]}${CL_NORM} ${CL_GREEN}{$comm_list}${CL_NORM}"
@@ -2062,7 +2063,8 @@ kvAppendBasicCommands() {
   [[ -z "${kv_desc[restart]}" ]] && kv.addCommand "restart" "Restart (stop+start) ${kv[prog_name]} service"
   [[ -z "${kv_desc[status]}" ]] && kv.addCommand "status" "Show current status of ${kv[prog_name]}"
 
-  kv_comm+=("${kv_comm_old}")
+  # shellcheck disable=SC2206
+  kv_comm+=($kv_comm_old)
 
   [[ -z "${kv_desc[help]}" ]] && kv.addCommand "help" "Show this information"
 }

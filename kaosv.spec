@@ -85,6 +85,7 @@ rm -rf %{buildroot}
 %changelog
 * Thu Feb 15 2018 Anton Novojilov <andy@essentialkaos.com> - 2.14.1-0
 - Fixed bug with lack of exiting from script on error
+- Fixed bug with help content output
 - Code refactoring
 
 * Mon Feb 12 2018 Anton Novojilov <andy@essentialkaos.com> - 2.14.0-0
