@@ -86,7 +86,7 @@ rm -rf %{buildroot}
 * Fri Feb 23 2018 Anton Novojilov <andy@essentialkaos.com> - 2.15.0-0
 - Brand new PID searching system which works without search pattern
 - Print error if user try to source init script (e.g . script)
-- Fixed bug with searching real user name in tmux session
+- Fixed bug with searching real username in tmux session
 
 * Thu Feb 15 2018 Anton Novojilov <andy@essentialkaos.com> - 2.14.1-0
 - Fixed bug with lack of exiting from script on error
