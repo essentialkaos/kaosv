@@ -218,19 +218,19 @@ declare -A kv_args
 declare -A kv_dout
 declare -A kv
 
-# Program name used as the base for help/paths/files generation
+# Program name used as the base for help/paths/files generation (String)
 kv[prog_name]=""
 
-# Path to lock file
+# Path to lock file (String)
 kv[lock_file]=""
 
-# Path to PID file
+# Path to PID file (String)
 kv[pid_file]=""
 
-# Service user
-kv[user]=""
+# Service user (String)
+kv[user]="root"
 
-# Service dir
+# Service dir (String)
 kv[dir]=""
 
 # Automatically create PID file while service demonization (Boolean)
@@ -248,22 +248,22 @@ kv[auto_actions_log]=""
 # Automatically search PID if PID file doesn't exist (Boolean)
 kv[auto_pid_search]=true
 
-# Time in seconds for service start
+# Time in seconds for service start (Number)
 kv[delay_start]=15
 
-# Time in seconds for service stop
+# Time in seconds for service stop (Number)
 kv[delay_stop]=30
 
-# Delay between start and stop
+# Delay between start and stop (Number)
 kv[delay_restart]=0
 
-# Path to PID dir
+# Path to PID dir (String)
 kv[pid_dir]=/var/run
 
-# Path to lock dir
+# Path to lock dir (String)
 kv[lock_dir]=/var/lock/subsys
 
-# Path to log
+# Path to log file (String)
 kv[log]=""
 
 # Core limit (Number)
@@ -293,7 +293,7 @@ kv[script]=""
 # Real user name (search real user name over sudo) (String)
 kv[real_user]=""
 
-# Temporary file for service output (can be only set to /dev/null)
+# Temporary file for service output (can be only set to /dev/null) (String)
 kv[output]=""
 
 ###############################################################################
