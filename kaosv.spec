@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.14.1
+Version:         2.15.0
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -46,7 +46,7 @@ Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
 BuildArch:       noarch
 BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires:        daemonize bash >= 4.0
+Requires:        daemonize bash >= 4.0 rpm
 
 ###############################################################################
 
@@ -83,6 +83,11 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Fri Feb 23 2018 Anton Novojilov <andy@essentialkaos.com> - 2.15.0-0
+- Brand new PID searching system which works without search pattern
+- Print error if user try to source init script (e.g . script)
+- Fixed bug with searching real user name in tmux session
+
 * Thu Feb 15 2018 Anton Novojilov <andy@essentialkaos.com> - 2.14.1-0
 - Fixed bug with lack of exiting from script on error
 - Fixed bug with help content output
