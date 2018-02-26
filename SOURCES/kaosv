@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.14.1"
+KV_VERSION="2.15.0"
 
 ###############################################################################
 
@@ -191,13 +191,17 @@ SYSCONFIG_DIR="/etc/sysconfig"
 
 HELP_SEPARATOR_LENGTH=4
 
+# -
+# Template for temorary data
 TMP_TEMPLATE="/tmp/kaosv.XXXXXXXX"
 
+# -
+# Path to cron dir
 CRON_DIR="/etc/cron.d"
 
+# -
+# Path to supervisor script
 SUPERVISOR="/usr/local/share/kaosv/supervisor"
-
-PROCESS_EXCLUDE_PATTERN="^([0-9 ]{1,6}) (grep|egrep|service|/bin/grep|/bin/egrep|/sbin/service|/etc/init\.d|/etc/rc\.d/init\.d)"
 
 ###############################################################################
 
@@ -214,22 +218,19 @@ declare -A kv_args
 declare -A kv_dout
 declare -A kv
 
-# Program name used as the base for help/paths/files generation
+# Program name used as the base for help/paths/files generation (String)
 kv[prog_name]=""
 
-# The pattern used for searching service process in the process tree
-kv[search_pattern]=""
-
-# Path to lock file
+# Path to lock file (String)
 kv[lock_file]=""
 
-# Path to PID file
+# Path to PID file (String)
 kv[pid_file]=""
 
-# Service user
-kv[user]=""
+# Service user (String)
+kv[user]="root"
 
-# Service dir
+# Service dir (String)
 kv[dir]=""
 
 # Automatically create PID file while service demonization (Boolean)
@@ -247,22 +248,22 @@ kv[auto_actions_log]=""
 # Automatically search PID if PID file doesn't exist (Boolean)
 kv[auto_pid_search]=true
 
-# Time in seconds for service start
+# Time in seconds for service start (Number)
 kv[delay_start]=15
 
-# Time in seconds for service stop
+# Time in seconds for service stop (Number)
 kv[delay_stop]=30
 
-# Delay between start and stop
+# Delay between start and stop (Number)
 kv[delay_restart]=0
 
-# Path to PID dir
+# Path to PID dir (String)
 kv[pid_dir]=/var/run
 
-# Path to lock dir
+# Path to lock dir (String)
 kv[lock_dir]=/var/lock/subsys
 
-# Path to log
+# Path to log file (String)
 kv[log]=""
 
 # Core limit (Number)
@@ -287,12 +288,12 @@ kv[oom_adj]=""
 kv[supervisor]=""
 
 # Script name (String)
-kv[script]=$(readlink -f "$0" | xargs -n1 basename)
+kv[script]=""
 
 # Real user name (search real user name over sudo) (String)
-kv[real_user]=$(who -m | cut -f1 -d" " | grep -E "[a-z]" || echo "root")
+kv[real_user]=""
 
-# Temporary file for service output (can be only set to /dev/null)
+# Temporary file for service output (can be only set to /dev/null) (String)
 kv[output]=""
 
 ###############################################################################
@@ -311,6 +312,13 @@ kv_pid="" # PID cache
 # Example:
 # kv.go $@
 kv.go() {
+  kvFindExecInfo
+
+  if [[ -z "${kv[script]}" ]] ; then
+    kv.error "Please do not use . syntax for executing this script"
+    return
+  fi
+
   [[ $# -eq 0 || "$1" == "help" ]] && kvUsage && kv.exit $ACTION_OK
 
   trap kv.exit SIGINT SIGTERM
@@ -810,22 +818,49 @@ kv.getPid() {
   kv.getPID "$@"
 }
 
-# Find PID for service
-#
-# 1: Search pattern (String) [Optional]
+# Find service PID
 #
 # Code: No
 # Echo: PID (Number)
 #
 # Example:
-# local pid=$(kv.findPID "service -c /etc/config.conf")
+# local pid=$(kv.findPID)
 kv.findPID() {
-  [[ -z "${kv[auto_pid_search]}" && -z "$1" ]] && return
+  [[ -z "${kv[auto_pid_search]}" ]] && return
 
-  local pattern="${1:-${kv[search_pattern]}}"
+  local pkg pkg_file pid user
 
-  # shellcheck disable=SC2009
-  ps ax -o pid,cmd | grep -E -v "$PROCESS_EXCLUDE_PATTERN" | grep "\\$pattern" | tr -s " " | sed 's/^ //' | cut -f1 -d" " | head -1
+  pkg=$(rpm -qf "/etc/init.d/${kv[script]}")
+
+  if [[ -z "$pkg" ]] ; then
+    return
+  fi
+
+  for pkg_file in $(rpm -ql "$pkg") ; do
+    # shellcheck disable=SC1001
+    if [[ ! "$pkg_file" =~ (\/sbin\/|\/bin\/) ]] ; then
+      continue
+    fi
+
+    if [[ ! -f "$pkg_file" || ! -x "$pkg_file" ]] ; then
+      continue
+    fi
+
+    pid=$(pgrep -f "$pkg_file" | head -1)
+
+    if [[ -z "$pid" ]] ; then
+      continue
+    fi
+
+    user=$(ps --no-header -p "$pid" -o user)
+
+    if [[ "$user" != "${kv[user]}" ]] ; then
+      continue
+    fi
+
+    echo "$pid"
+    return
+  done
 }
 
 # -
@@ -1350,6 +1385,30 @@ kv.log() {
 
 # -
 #
+# Find basic info about current script execution
+#
+# *: Full command
+#
+# Code: No
+# Echo: No
+kvFindExecInfo() {
+  if [[ "$0" != "-bash" ]] ; then
+    kv[script]=$(readlink -f "$0" | xargs -n1 basename)
+  fi
+
+  kv[real_user]=$(who -m 2>/dev/null | cut -f1 -d" ")
+
+  if [[ -z "${kv[real_user]}" ]] ; then
+    if [[ -n "$SUDO_USER" ]] ; then
+      kv[real_user]="$SUDO_USER"
+    else
+      kv[real_user]="root"
+    fi
+  fi
+}
+
+# -
+#
 # Prepare script for start
 #
 # Code: No
@@ -1371,11 +1430,6 @@ kvPrepare() {
 kvCheck() {
   if [[ -z "${kv[prog_name]}" ]] ; then
     kv.error "Can't execute this init script. Please define prog_name value first"
-    kv.exit $ACTION_ERROR
-  fi
-
-  if [[ -n "${kv[auto_pid_search]}" && -z "${kv[search_pattern]}" ]] ; then
-    kv.error "Can't execute this init script. Please define \"search_pattern\" property first"
     kv.exit $ACTION_ERROR
   fi
 
