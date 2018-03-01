@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.15.0"
+KV_VERSION="2.15.1"
 
 ###############################################################################
 
@@ -228,7 +228,7 @@ kv[lock_file]=""
 kv[pid_file]=""
 
 # Service user (String)
-kv[user]="root"
+kv[user]=""
 
 # Service dir (String)
 kv[dir]=""
@@ -564,11 +564,7 @@ kv.readSysconfig() {
 kv.run() {
   [[ $# -eq 0 ]] && kv.log "You can't execute kv.run without arguments" && return 1
 
-  local cmd_user="${kv[user]}"
-
-  [[ -z "$cmd_user" ]] && cmd_user="root"
-
-  kv.runAs "$cmd_user" "$@"
+  kv.runAs "${kv[user]:-root}" "$@"
 
   return $?
 }
@@ -854,7 +850,7 @@ kv.findPID() {
 
     user=$(ps --no-header -p "$pid" -o user)
 
-    if [[ "$user" != "${kv[user]}" ]] ; then
+    if [[ "$user" != "${kv[user]:-root}" ]] ; then
       continue
     fi
 

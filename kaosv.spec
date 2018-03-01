@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.15.0
+Version:         2.15.1
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Wed Feb 28 2018 Anton Novojilov <andy@essentialkaos.com> - 2.15.1-0
+- Fixed bug with changing pid directory owner to root if kv[user] not defined
+
 * Fri Feb 23 2018 Anton Novojilov <andy@essentialkaos.com> - 2.15.0-0
 - Brand new PID searching system which works without search pattern
 - Print error if user try to source init script (e.g . script)
