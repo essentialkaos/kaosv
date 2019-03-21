@@ -1026,7 +1026,7 @@ kv.hasUser() {
 # fi
 kv.isBoundPort() {
   [[ $# -eq 0 ]] && return 1
-  [[ $(netstat -antu | tr -s " " | cut -f4 -d" " | sed 's/:.*:/:/g' | cut -f2 -d":" | grep -E "^$1$" | head -1) ]] && return 0 || return 1
+  [[ -n $(netstat -antu | tr -s " " | cut -f4 -d" " | sed 's/:.*:/:/g' | cut -f2 -d":" | grep -E "^$1$" | head -1) ]] && return 0 || return 1
 }
 
 # Check that service is works
@@ -1818,7 +1818,7 @@ kvStart() {
   retcode=$?
   kv.showStatusMessage "$retcode"
 
-  if [[ ${kv_dout[start_post]} ]] ; then
+  if [[ -n "${kv_dout[start_post]}" ]] ; then
     kvExecDefHandler "start" "post" "$@"
   else
     kvExecDefHandler "start" "post" "$@" &>> "${kv[output]}"
