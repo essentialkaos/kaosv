@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.15.1"
+KV_VERSION="2.15.2"
 
 ###############################################################################
 
@@ -313,11 +313,7 @@ kv_pid="" # PID cache
 # kv.go $@
 kv.go() {
   kvFindExecInfo
-
-  if [[ -z "${kv[script]}" ]] ; then
-    kv.error "Please do not use . syntax for executing this script"
-    return
-  fi
+  kvCheckExec
 
   [[ $# -eq 0 || "$1" == "help" ]] && kvUsage && kv.exit $ACTION_OK
 
@@ -1400,6 +1396,19 @@ kvFindExecInfo() {
     else
       kv[real_user]="root"
     fi
+  fi
+}
+
+# -
+#
+# Check how script was executed
+#
+# Code: No
+# Echo: No
+kvCheckExec() {
+  if [[ -n $(printenv HOME) || -n $(printenv SHELL) ]] ; then
+    kv.error "Direct script execution is forbidden. You should use 'service' utility instead."
+    exit 1
   fi
 }
 
