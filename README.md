@@ -17,10 +17,9 @@ Documentation for latest version can be found [here](https://docs.kaos.st/kaosv/
 
 ### Examples
 
-* [ejabberd](https://github.com/essentialkaos/kaos-repo/blob/master/specs/ejabberd/SOURCES/ejabberd.init)
 * [memcached](https://github.com/essentialkaos/kaos-repo/blob/master/specs/memcached/SOURCES/memcached.init)
 * [pgbouncer](https://github.com/essentialkaos/kaos-repo/blob/master/specs/pgbouncer/SOURCES/pgbouncer.init)
-* [postgresql](https://github.com/essentialkaos/kaos-repo/blob/master/specs/postgresql-96/SOURCES/postgresql.init)
+* [postgresql](https://github.com/essentialkaos/kaos-repo/blob/master/specs/postgresql-11/SOURCES/postgresql.init)
 * [redis](https://github.com/essentialkaos/kaos-repo/blob/master/specs/redis/SOURCES/redis.init)
 * [salt](https://github.com/essentialkaos/kaos-repo/blob/master/specs/salt/SOURCES/salt-master.init)
 * [webkaos](https://github.com/essentialkaos/webkaos/blob/master/SOURCES/webkaos.init)
