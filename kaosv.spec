@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.15.2
+Version:         2.15.3
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 ################################################################################
 
 %changelog
+* Sat May 25 2019 Anton Novojilov <andy@essentialkaos.com> - 2.15.3-0
+- Improved forced stop handling
+
 * Thu Mar 21 2019 Anton Novojilov <andy@essentialkaos.com> - 2.15.2-0
 - Disallowed direct script execution
 

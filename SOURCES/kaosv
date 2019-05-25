@@ -13,7 +13,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.15.2"
+KV_VERSION="2.15.3"
 
 ###############################################################################
 
@@ -1811,7 +1811,7 @@ kvStart() {
 
   retcode=$?
 
-  [[ $retcode -ne 0 ]] && return $retcode
+  [[ $retcode -ne $ACTION_OK ]] && return $retcode
 
   kv.showProcessMessage "Starting ${kv[prog_name]}"
   kvExecDefHandler "start" "" "$@" &>> "${kv[output]}"
@@ -1824,16 +1824,16 @@ kvStart() {
     kvExecDefHandler "start" "post" "$@" &>> "${kv[output]}"
   fi
 
-  [[ $? -ne $retcode && $retcode -eq 0 ]] && retcode=$?
+  [[ $? -ne $retcode && $retcode -eq $ACTION_OK ]] && retcode=$?
 
-  if [[ $retcode -eq 0 ]] ; then
+  if [[ $retcode -eq $ACTION_OK ]] ; then
     [[ -n "${kv[auto_lock]}" ]] && kv.createLock
     [[ -n "${kv[supervisor]}" ]] && kvExportSupervisorCron
     [[ -n "${kv[oom_adj]}" ]] && kv.setOOMScoreAdj
   fi
 
   if [[ -n "${kv[auto_actions_log]}" ]] ; then
-    if [[ $retcode -eq 0 ]] ; then
+    if [[ $retcode -eq $ACTION_OK ]] ; then
       kv.log "${kv[real_user]} started service"
     else
       kv.log "${kv[real_user]} tried to start service but the action failed"
@@ -1875,7 +1875,7 @@ kvStop() {
 
   retcode=$?
 
-  [[ $retcode -ne 0 ]] && return $retcode
+  [[ $retcode -ne $ACTION_OK ]] && return $retcode
 
   kv_pid=$(kv.getPID)
 
@@ -1890,17 +1890,16 @@ kvStop() {
     kvExecDefHandler "stop" "post" "$@" &>> "${kv[output]}"
   fi
 
-  [[ $? -ne $retcode && $retcode -eq 0 ]] && retcode=$?
+  [[ $? -ne $retcode && $retcode -eq $ACTION_OK ]] && retcode=$?
 
-  if [[ $retcode -eq 0 ]] ; then
+  if [[ $retcode -eq $ACTION_OK || $retcode -eq $ACTION_FORCED ]] ; then
     [[ -n "${kv[auto_lock]}" ]] && kv.removeLock
     [[ -n "${kv[supervisor]}" ]] && kvRemoveSupervisorCron
+    [[ -f "${kv[pid_file]}" ]] && kv.removePIDFile
   fi
 
-  [[ $retcode -eq 0 && -f ${kv[pid_file]} ]] && kv.removePIDFile
-
   if [[ -n "${kv[auto_actions_log]}" ]] ; then
-    if [[ $retcode -eq 0 ]] ; then
+    if [[ $retcode -eq $ACTION_OK || $retcode -eq $ACTION_FORCED ]] ; then
       kv.log "${kv[real_user]} stopped service"
     else
       kv.log "${kv[real_user]} tried to stop service but the action failed"
@@ -1938,7 +1937,7 @@ kvRestart() {
 
   kvExecDefHandler "restart" "" "$@" &>> "${kv[output]}"
 
-  [[ $? -ne 0 ]] && return $ACTION_ERROR
+  [[ $? -ne $ACTION_OK ]] && return $ACTION_ERROR
 
   kvStop
 
@@ -1946,7 +1945,7 @@ kvRestart() {
 
   kvStart
 
-  [[ $? -ne 0 ]] && return $ACTION_ERROR
+  [[ $? -ne $ACTION_OK ]] && return $ACTION_ERROR
 
   if [[ -n "${kv_dout[restart_post]}" ]] ; then
     kvExecDefHandler "restart" "post" "$@"
