@@ -85,6 +85,7 @@ rm -rf %{buildroot}
 %changelog
 * Sat May 25 2019 Anton Novojilov <andy@essentialkaos.com> - 2.15.3-0
 - Improved forced stop handling
+- Improved PID search mechanic
 
 * Thu Mar 21 2019 Anton Novojilov <andy@essentialkaos.com> - 2.15.2-0
 - Disallowed direct script execution

@@ -820,7 +820,7 @@ kv.getPid() {
 kv.findPID() {
   [[ -z "${kv[auto_pid_search]}" ]] && return
 
-  local pkg pkg_file pid user
+  local pkg pkg_file pid cmd_info cmd_part user
 
   pkg=$(rpm -qf "/etc/init.d/${kv[script]}")
 
@@ -838,7 +838,18 @@ kv.findPID() {
       continue
     fi
 
-    pid=$(pgrep -f "$pkg_file" | head -1)
+    # shellcheck disable=SC2207
+    cmd_info=($(pgrep -o -l -f "$pkg_file"))
+
+    if [[ ${#cmd_info[@]} -eq 0 ]] ; then
+      continue
+    fi
+
+    for cmd_part in "${cmd_info[@]:1}" ; do
+      if [[ "$cmd_part" == "$pkg_file" ]] ; then
+        pid="${cmd_info[0]}"
+      fi
+    done
 
     if [[ -z "$pid" ]] ; then
       continue
