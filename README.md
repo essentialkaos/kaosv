@@ -1,6 +1,6 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/kaosv.svg"/></a></p>
 
-<p align="center"><a href="#documentation">Documentation</a> • <a href="#examples">Examples</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#documentation">Documentation</a> • <a href="#examples">Examples</a> • <a href="#common-mistakes">Common mistakes</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
 
 <p align="center">
   <a href="https://travis-ci.org/essentialkaos/kaosv"><img src="https://travis-ci.org/essentialkaos/kaosv.svg"></a>
@@ -23,6 +23,17 @@ Documentation for latest version can be found [here](https://docs.kaos.st/kaosv/
 * [redis](https://github.com/essentialkaos/kaos-repo/blob/master/specs/redis/SOURCES/redis.init)
 * [salt](https://github.com/essentialkaos/kaos-repo/blob/master/specs/salt/SOURCES/salt-master.init)
 * [webkaos](https://github.com/essentialkaos/webkaos/blob/master/SOURCES/webkaos.init)
+
+### Common mistakes
+
+**Checking the system environment before executing `kv.go`**
+
+You should define a pre-start handler with [disabled output redirect](https://docs.kaos.st/kaosv/2.15.3/#491) and perform system check in this handler ([example](https://github.com/essentialkaos/kaos-repo/blob/master/specs/pgbouncer/SOURCES/pgbouncer.init#L91)).
+
+
+**The script doesn't run application and return a non-zero exit code**
+
+All handlers must always return action status code (`ACTION_OK`, `ACTION_ERROR`, `ACTION_FORCED`) otherwise it can be exit code from the last command performed in this handler.
 
 ### Build Status
 
