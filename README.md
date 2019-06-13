@@ -28,7 +28,7 @@ Documentation for latest version can be found [here](https://docs.kaos.st/kaosv/
 
 **Checking the system environment before executing `kv.go`**
 
-You should define a pre-start handler with [disabled output redirect](https://docs.kaos.st/kaosv/2.15.3/#491) and perform system check in this handler ([example](https://github.com/essentialkaos/kaos-repo/blob/master/specs/pgbouncer/SOURCES/pgbouncer.init#L91)).
+You should define a pre-start handler with [disabled output redirect](https://docs.kaos.st/kaosv/2.15.3/#491) and perform system check in this handler ([example](https://github.com/essentialkaos/kaos-repo/blob/master/specs/pgbouncer/SOURCES/pgbouncer.init#L86)).
 
 
 **The script doesn't run application and return a non-zero exit code**
