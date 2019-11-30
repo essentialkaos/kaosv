@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC2015,SC2028,SC2034,SC2119,SC2120,SC2154,SC2181
+# shellcheck disable=SC1117,SC2015,SC2028,SC2034,SC2119,SC2120,SC2154,SC2181,SC2254
 
 # KAOSv is bash lib for SysV init scripts.
 #
