@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC2015,SC2028,SC2034,SC2119,SC2120,SC2154,SC2181
+# shellcheck disable=SC1117,SC2015,SC2028,SC2034,SC2119,SC2120,SC2154,SC2181,SC2254
 
 # KAOSv is bash lib for SysV init scripts.
 #
@@ -10,10 +10,16 @@ if [[ "$BASH" == "/bin/sh" ]] ; then
   exit $?
 fi
 
+########################################################################################
+
+if [[ -n "${SCRIPT_DEBUG}" ]] ; then
+  set -x
+fi
+
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.15.3"
+KV_VERSION="2.15.4"
 
 ###############################################################################
 
@@ -312,6 +318,8 @@ kv_pid="" # PID cache
 # Example:
 # kv.go $@
 kv.go() {
+  trap kvErrHandler ERR
+
   kvFindExecInfo
   kvCheckExec
 
@@ -2311,6 +2319,20 @@ kvGetBootTimestamp() {
 # Echo: Modification timestamp (Number)
 kvGetFileModDate() {
   stat -c '%Y' "$1" 2> /dev/null
+}
+
+# -
+#
+# Handler for errors
+#
+# Code: No
+# Echo: No
+kvErrHandler() {
+  while caller $((n++)) ; do
+    true
+  done
+
+  exit 1
 }
 
 ###############################################################################
