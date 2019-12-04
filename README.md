@@ -3,7 +3,7 @@
 <p align="center"><a href="#documentation">Documentation</a> • <a href="#examples">Examples</a> • <a href="#common-mistakes">Common mistakes</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
 
 <p align="center">
-  <a href="https://travis-ci.org/essentialkaos/kaosv"><img src="https://travis-ci.org/essentialkaos/kaosv.svg"></a>
+  <a href="https://travis-ci.com/essentialkaos/kaosv"><img src="https://travis-ci.com/essentialkaos/kaosv.svg"></a>
   <a href="#license"><img src="https://gh.kaos.st/ekol.svg"></a>
 </p>
 
@@ -39,8 +39,8 @@ All handlers must always return action status code (`ACTION_OK`, `ACTION_ERROR`,
 
 | Branch | Status |
 |--------|--------|
-| `master` | [![Build Status](https://travis-ci.org/essentialkaos/kaosv.svg?branch=master)](https://travis-ci.org/essentialkaos/kaosv) |
-| `develop` | [![Build Status](https://travis-ci.org/essentialkaos/kaosv.svg?branch=develop)](https://travis-ci.org/essentialkaos/kaosv) |
+| `master` | [![Build Status](https://travis-ci.com/essentialkaos/kaosv.svg?branch=master)](https://travis-ci.com/essentialkaos/kaosv) |
+| `develop` | [![Build Status](https://travis-ci.com/essentialkaos/kaosv.svg?branch=develop)](https://travis-ci.com/essentialkaos/kaosv) |
 
 ### License
 
