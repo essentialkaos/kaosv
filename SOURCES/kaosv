@@ -1166,6 +1166,9 @@ kv.checkSELinux() {
 #
 # Code: Yes
 # Echo: No
+#
+# Example:
+# kv.chown -h root:staff myfile.txt
 kv.chown() {
   # shellcheck disable=SC2124
   local object="${@: -1}"
@@ -1185,6 +1188,9 @@ kv.chown() {
 #
 # Code: Yes
 # Echo: No
+#
+# Example:
+# kv.chmod --silent 0644 myfile.txt
 kv.chmod() {
   # shellcheck disable=SC2124
   local object="${@: -1}"
