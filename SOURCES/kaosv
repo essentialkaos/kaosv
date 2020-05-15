@@ -19,7 +19,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.15.5"
+KV_VERSION="2.16.0"
 
 ###############################################################################
 
@@ -1158,6 +1158,44 @@ kv.checkSELinux() {
 
     return $ACTION_ERROR
   fi
+}
+
+# Change file or directory owner, but DO NOT follow symlinks
+#
+# *: All options and arguments for chown command
+#
+# Code: Yes
+# Echo: No
+kv.chown() {
+  # shellcheck disable=SC2124
+  local object="${@: -1}"
+
+  if [[ -h "$object" ]] ; then
+    return 1
+  fi
+
+  chown "$@"
+
+  return $?
+}
+
+# Change file or directory mode, but DO NOT follow symlinks
+#
+# *: All options and arguments for chmod command
+#
+# Code: Yes
+# Echo: No
+kv.chmod() {
+  # shellcheck disable=SC2124
+  local object="${@: -1}"
+
+  if [[ -h "$object" ]] ; then
+    return 1
+  fi
+
+  chmod "$@"
+
+  return $?
 }
 
 ###############################################################################

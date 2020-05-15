@@ -34,7 +34,7 @@
 
 Summary:         Bash lib for SysV init scripts
 Name:            kaosv
-Version:         2.15.5
+Version:         2.16.0
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 ################################################################################
 
 %changelog
+* Fri May 15 2020 Anton Novojilov <andy@essentialkaos.com> - 2.16.0-0
+- Added `kv.chmod` and `kv.chown` functions
+
 * Wed Dec 04 2019 Anton Novojilov <andy@essentialkaos.com> - 2.15.5-0
 - Removed handler for script errors
 
