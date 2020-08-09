@@ -37,7 +37,7 @@ Name:            kaosv
 Version:         2.16.0
 Release:         0%{?dist}
 Group:           Applications/System
-License:         EKOL
+License:         Apache License, Version 2.0
 URL:             https://github.com/essentialkaos/kaosv
 Vendor:          ESSENTIAL KAOS
 
@@ -76,7 +76,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc LICENSE.EN LICENSE.RU
+%doc LICENSE
 %{_initddir}/%{name}
 %{_loc_datarootdir}/%{name}/supervisor
 
