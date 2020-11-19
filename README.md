@@ -1,7 +1,7 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/kaosv.svg"/></a></p>
 
 <p align="center">
-  <a href="https://travis-ci.com/essentialkaos/kaosv"><img src="https://travis-ci.com/essentialkaos/kaosv.svg"></a>
+  <a href="https://github.com/essentialkaos/kaosv/actions"><img src="https://github.com/essentialkaos/kaosv/workflows/CI/badge.svg" alt="GitHub Actions Status" /></a>
   <a href="#license"><img src="https://gh.kaos.st/apache2.svg"></a>
 </p>
 
@@ -41,8 +41,8 @@ All handlers must always return action status code (`ACTION_OK`, `ACTION_ERROR`,
 
 | Branch | Status |
 |--------|--------|
-| `master` | [![Build Status](https://travis-ci.com/essentialkaos/kaosv.svg?branch=master)](https://travis-ci.com/essentialkaos/kaosv) |
-| `develop` | [![Build Status](https://travis-ci.com/essentialkaos/kaosv.svg?branch=develop)](https://travis-ci.com/essentialkaos/kaosv) |
+| `master` | [![CI](https://github.com/essentialkaos/kaosv/workflows/CI/badge.svg?branch=master)](https://github.com/essentialkaos/kaosv/actions) |
+| `develop` | [![CI](https://github.com/essentialkaos/kaosv/workflows/CI/badge.svg?branch=develop)](https://github.com/essentialkaos/kaosv/actions) |
 
 ### License
 
