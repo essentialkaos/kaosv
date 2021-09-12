@@ -1,7 +1,7 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/kaosv.svg"/></a></p>
 
 <p align="center">
-  <a href="https://github.com/essentialkaos/kaosv/actions"><img src="https://github.com/essentialkaos/kaosv/workflows/CI/badge.svg" alt="GitHub Actions Status" /></a>
+  <a href="https://kaos.sh/w/swptop/ci"><img src="https://kaos.sh/w/swptop/ci.svg" alt="GitHub Actions CI Status" /></a>
   <a href="#license"><img src="https://gh.kaos.st/apache2.svg"></a>
 </p>
 
@@ -41,8 +41,8 @@ All handlers must always return action status code (`ACTION_OK`, `ACTION_ERROR`,
 
 | Branch | Status |
 |--------|--------|
-| `master` | [![CI](https://github.com/essentialkaos/kaosv/workflows/CI/badge.svg?branch=master)](https://github.com/essentialkaos/kaosv/actions) |
-| `develop` | [![CI](https://github.com/essentialkaos/kaosv/workflows/CI/badge.svg?branch=develop)](https://github.com/essentialkaos/kaosv/actions) |
+| `master` | [![CI](https://kaos.sh/w/swptop/ci.svg?branch=master)](https://kaos.sh/w/swptop/ci?query=branch:master) |
+| `develop` | [![CI](https://kaos.sh/w/swptop/ci.svg?branch=master)](https://kaos.sh/w/swptop/ci?query=branch:develop) |
 
 ### License
 
