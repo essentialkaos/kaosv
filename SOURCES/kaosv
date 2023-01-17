@@ -19,7 +19,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.16.1"
+KV_VERSION="2.17.0"
 
 ###############################################################################
 
@@ -190,7 +190,7 @@ HANDLER_POST="post"
 
 SYSCONFIG_DIR="/etc/sysconfig"
 
-HELP_SEPARATOR_LENGTH=4
+HELP_SEPARATOR_LENGTH=2
 
 # -
 # Template for temorary data
@@ -351,6 +351,15 @@ kv.go() {
   if [[ "$comm" != "status" ]] ; then
     kvCheck
     kvMkOutput
+  fi
+
+  if kvIsSystemdCompatibleCommand "$comm" "$@" ; then
+    if ! kvIsSystemdCall ; then
+      if kvHasSystemdService ; then
+        kvExecSystemdCommand "$comm"
+        kv.exit $?
+      fi
+    fi
   fi
 
   if [[ -n "${kv[auto_actions_log]}" ]] ; then
@@ -2168,6 +2177,10 @@ kvUsage() {
     fi
   done
 
+  if kvIsColorsSupported ; then
+    kv.show "\n  KAOSv: $KV_VERSION" $DARK
+  fi
+
   kv.show ""
 }
 
@@ -2392,6 +2405,101 @@ kvIsColorsSupported() {
   fi
 
   return 0
+}
+
+# -
+#
+# Check if systemd is installed
+#
+# Code: Yes
+# Echo: No
+kvIsSystemdPresent() {
+  if [[ ! -e "/bin/systemctl" ]] ; then
+    return 1
+  fi
+
+  return 0
+}
+
+# -
+#
+# Return true if script executed from systemd service
+#
+# Code: Yes
+# Echo: No
+kvIsSystemdCall() {
+  if [[ -n "$INVOCATION_ID" ]] ; then
+    return 0
+  fi
+
+  return 1
+}
+
+# -
+#
+# Check if systemd service present
+#
+# Code: Yes
+# Echo: No
+kvHasSystemdService() {
+  if ! kvIsSystemdPresent ; then
+    return 1
+  fi
+
+  if [[ -n $(systemctl list-units --all -t service --full --no-legend "${kv[script]}.service" 2> /dev/null) ]] ; then
+    return 0
+  fi
+
+  return 1
+}
+
+# -
+#
+# Check if command compatible with systemd
+#
+# 1: Command (String)
+# *: Command arguments
+#
+# Code: Yes
+# Echo: No
+kvIsSystemdCompatibleCommand() {
+  if [[ -n "$2" ]] ; then
+    return 1
+  fi
+
+  case "$1" in
+    "start")   return 0 ;;
+    "restart") return 0 ;;
+    "stop")    return 0 ;;
+  esac
+
+  return 1
+}
+
+# -
+#
+# Execute command using systemd
+#
+# 1: Command (String)
+#
+# Code: Yes
+# Echo: No
+kvExecSystemdCommand() {
+  local comm="$1"
+
+  case "$comm" in
+    "start")   kv.showm "${CL_BOLD}Starting ${kv[prog_name]} ${CL_DARK}(systemd)${CL_BOLD}: ${CL_NORM}" ;;
+    "stop")    kv.showm "${CL_BOLD}Stopping ${kv[prog_name]} ${CL_DARK}(systemd)${CL_BOLD}: ${CL_NORM}" ;;
+    "restart") kv.showm "${CL_BOLD}Restarting ${kv[prog_name]} ${CL_DARK}(systemd)${CL_BOLD}: ${CL_NORM}" ;;
+  esac
+
+  if systemctl "$comm" "${kv[script]}.service" &> /dev/null; then
+    kv.showStatusMessage 0
+    return 0
+  fi
+
+  kv.showStatusMessage 1
+  return 1
 }
 
 ###############################################################################

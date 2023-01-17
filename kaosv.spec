@@ -34,7 +34,7 @@
 
 Summary:    Bash lib for SysV init scripts
 Name:       kaosv
-Version:    2.16.1
+Version:    2.17.0
 Release:    0%{?dist}
 Group:      Applications/System
 License:    Apache License, Version 2.0
@@ -83,7 +83,8 @@ rm -rf %{buildroot}
 ################################################################################
 
 %changelog
-* Tue Jan 17 2023 Anton Novojilov <andy@essentialkaos.com> - 2.16.1-0
+* Tue Jan 17 2023 Anton Novojilov <andy@essentialkaos.com> - 2.17.0-0
+- Added backward compatibility with systemd for start, stop and restart commands
 - Removed deprecated consoletype usage
 - Improved colors support check
 - Added NO_COLOR support
