@@ -32,21 +32,21 @@
 
 ################################################################################
 
-Summary:         Bash lib for SysV init scripts
-Name:            kaosv
-Version:         2.16.0
-Release:         0%{?dist}
-Group:           Applications/System
-License:         Apache License, Version 2.0
-URL:             https://github.com/essentialkaos/kaosv
-Vendor:          ESSENTIAL KAOS
+Summary:    Bash lib for SysV init scripts
+Name:       kaosv
+Version:    2.16.1
+Release:    0%{?dist}
+Group:      Applications/System
+License:    Apache License, Version 2.0
+URL:        https://kaos.sh/kaosv
+Vendor:     ESSENTIAL KAOS
 
-Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
+Source0:    https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
 
-BuildArch:       noarch
-BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildArch:  noarch
+BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires:        daemonize bash >= 4.0 rpm
+Requires:   daemonize bash >= 4.0 rpm
 
 ################################################################################
 
@@ -83,6 +83,12 @@ rm -rf %{buildroot}
 ################################################################################
 
 %changelog
+* Tue Jan 17 2023 Anton Novojilov <andy@essentialkaos.com> - 2.16.1-0
+- Removed deprecated consoletype usage
+- Improved colors support check
+- Added NO_COLOR support
+- Code refactoring
+
 * Fri May 15 2020 Anton Novojilov <andy@essentialkaos.com> - 2.16.0-0
 - Added `kv.chmod` and `kv.chown` functions
 

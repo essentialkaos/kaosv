@@ -19,75 +19,70 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.16.0"
+KV_VERSION="2.16.1"
 
 ###############################################################################
 
-if [[ $(consoletype) == "pty" && -t 1 ]] ; then
-  # Code for reset prev color codes
-  NORM=0
-  # Code for bold text
-  BOLD=1
-  # Code for underline text
-  UNLN=4
-  # Code for red color
-  RED=31
-  # Code for green color
-  GREEN=32
-  # Code for yellow color
-  YELLOW=33
-  # Code for blue color
-  BLUE=34
-  # Code for magenta color
-  MAG=35
-  # Code for cyan color
-  CYAN=36
-  # Code for light grey color
-  GREY=37
-  # Code for dark grey color
-  DARK=90
+# Code for reset prev color codes
+NORM=0
+# Code for bold text
+BOLD=1
+# Code for underline text
+UNLN=4
+# Code for red color
+RED=31
+# Code for green color
+GREEN=32
+# Code for yellow color
+YELLOW=33
+BROWN=33
+# Code for blue color
+BLUE=34
+# Code for magenta color
+MAG=35
+# Code for cyan color
+CYAN=36
+# Code for light grey color
+GREY=37
+# Code for dark grey color
+DARK=90
 
-  BROWN=33
-
-  CL_NORM="\e[0m"
-  CL_BOLD="\e[0;${BOLD};49m"
-  CL_UNLN="\e[0;${UNLN};49m"
-  CL_RED="\e[0;${RED};49m"
-  CL_GREEN="\e[0;${GREEN};49m"
-  CL_YELLOW="\e[0;${YELLOW};49m"
-  CL_BROWN="\e[0;${YELLOW};49m"
-  CL_BLUE="\e[0;${BLUE};49m"
-  CL_MAG="\e[0;${MAG};49m"
-  CL_CYAN="\e[0;${CYAN};49m"
-  CL_GREY="\e[0;${GREY};49m"
-  CL_DARK="\e[0;${DARK};49m"
-  CL_BL_RED="\e[1;${RED};49m"
-  CL_BL_GREEN="\e[1;${GREEN};49m"
-  CL_BL_YELLOW="\e[1;${YELLOW};49m"
-  CL_BL_BROWN="\e[1;${YELLOW};49m"
-  CL_BL_BLUE="\e[1;${BLUE};49m"
-  CL_BL_MAG="\e[1;${MAG};49m"
-  CL_BL_CYAN="\e[1;${CYAN};49m"
-  CL_BL_GREY="\e[1;${GREY};49m"
-  CL_UL_RED="\e[4;${RED};49m"
-  CL_UL_GREEN="\e[4;${GREEN};49m"
-  CL_UL_YELLOW="\e[4;${YELLOW};49m"
-  CL_UL_BROWN="\e[4;${YELLOW};49m"
-  CL_UL_BLUE="\e[4;${BLUE};49m"
-  CL_UL_MAG="\e[4;${MAG};49m"
-  CL_UL_CYAN="\e[4;${CYAN};49m"
-  CL_UL_GREY="\e[4;${GREY};49m"
-  CL_BG_RED="\e[7;${RED};49m"
-  CL_BG_GREEN="\e[7;${GREEN};49m"
-  CL_BG_YELLOW="\e[7;${YELLOW};49m"
-  CL_BG_BROWN="\e[7;${YELLOW};49m"
-  CL_BG_BLUE="\e[7;${BLUE};49m"
-  CL_BG_MAG="\e[7;${MAG};49m"
-  CL_BG_CYAN="\e[7;${CYAN};49m"
-  CL_BG_GREY="\e[7;${GREY};49m"
-
-  COLORS_ALLOWED=true
-fi
+CL_NORM="\e[0m"
+CL_BOLD="\e[0;${BOLD};49m"
+CL_UNLN="\e[0;${UNLN};49m"
+CL_RED="\e[0;${RED};49m"
+CL_GREEN="\e[0;${GREEN};49m"
+CL_YELLOW="\e[0;${YELLOW};49m"
+CL_BROWN="\e[0;${YELLOW};49m"
+CL_BLUE="\e[0;${BLUE};49m"
+CL_MAG="\e[0;${MAG};49m"
+CL_CYAN="\e[0;${CYAN};49m"
+CL_GREY="\e[0;${GREY};49m"
+CL_DARK="\e[0;${DARK};49m"
+CL_BL_RED="\e[1;${RED};49m"
+CL_BL_GREEN="\e[1;${GREEN};49m"
+CL_BL_YELLOW="\e[1;${YELLOW};49m"
+CL_BL_BROWN="\e[1;${YELLOW};49m"
+CL_BL_BLUE="\e[1;${BLUE};49m"
+CL_BL_MAG="\e[1;${MAG};49m"
+CL_BL_CYAN="\e[1;${CYAN};49m"
+CL_BL_GREY="\e[1;${GREY};49m"
+CL_UL_RED="\e[4;${RED};49m"
+CL_UL_GREEN="\e[4;${GREEN};49m"
+CL_UL_YELLOW="\e[4;${YELLOW};49m"
+CL_UL_BROWN="\e[4;${YELLOW};49m"
+CL_UL_BLUE="\e[4;${BLUE};49m"
+CL_UL_MAG="\e[4;${MAG};49m"
+CL_UL_CYAN="\e[4;${CYAN};49m"
+CL_UL_GREY="\e[4;${GREY};49m"
+CL_BG_RED="\e[7;${RED};49m"
+CL_BG_GREEN="\e[7;${GREEN};49m"
+CL_BG_YELLOW="\e[7;${YELLOW};49m"
+CL_BG_BROWN="\e[7;${YELLOW};49m"
+CL_BG_BLUE="\e[7;${BLUE};49m"
+CL_BG_MAG="\e[7;${MAG};49m"
+CL_BG_CYAN="\e[7;${CYAN};49m"
+CL_BG_GREY="\e[7;${GREY};49m"
 
 ###############################################################################
 
@@ -239,6 +234,9 @@ kv[user]=""
 # Service dir (String)
 kv[dir]=""
 
+# Enable/disable colored output (Boolean)
+kv[use_colors]=true
+
 # Automatically create PID file while service demonization (Boolean)
 kv[auto_pid]=true
 
@@ -318,6 +316,10 @@ kv_pid="" # PID cache
 # Example:
 # kv.go $@
 kv.go() {
+  if ! kvIsColorsSupported ; then
+    kv.disableColors
+  fi
+
   kvFindExecInfo
   kvCheckExec
 
@@ -1138,9 +1140,7 @@ kv.setOOMScoreAdj() {
   [[ -z "$pid" ]] && pid=$(kv.getPID)
   [[ -z "$pid" ]] && return 1
 
-  echo "$adj" 1> "/proc/$pid/oom_score_adj" 2>/dev/null
-
-  if [[ $? -ne 0 ]] ; then
+  if ! echo "$adj" 1> "/proc/$pid/oom_score_adj" 2>/dev/null ; then
     kv.warn "Can't set OOM score adjustment"
   fi
 }
@@ -1302,11 +1302,12 @@ kv.exit() {
 # Code: No
 # Echo: No
 kv.disableColors() {
-  unset NORM BOLD UNLN RED GREEN YELLOW BLUE MAG CYAN GREY DARK
+  unset NORM BOLD UNLN RED GREEN YELLOW BROWN BLUE MAG CYAN GREY DARK
   unset CL_NORM CL_BOLD CL_UNLN CL_RED CL_GREEN CL_YELLOW CL_BLUE CL_MAG CL_CYAN CL_GREY CL_DARK
   unset CL_BL_RED CL_BL_GREEN CL_BL_YELLOW CL_BL_BLUE CL_BL_MAG CL_BL_CYAN CL_BL_GREY
   unset CL_UL_RED CL_UL_GREEN CL_UL_YELLOW CL_UL_BLUE CL_UL_MAG CL_UL_CYAN CL_UL_GREY
   unset CL_BG_RED CL_BG_GREEN CL_BG_YELLOW CL_BG_BLUE CL_BG_MAG CL_BG_CYAN CL_BG_GREY
+  kv[use_colors]=""
 }
 
 # Print error message
@@ -1346,7 +1347,7 @@ kv.warn() {
 # show "Signal sended"
 # show "Can't do some action" $RED
 kv.show() {
-  if [[ -n "$2" && -n "$COLORS_ALLOWED" ]] ; then
+  if [[ -n "$2" && -n "${kv[use_colors]}" ]] ; then
     echo -e "\e[${2}m${1}\e[0m"
   else
     echo -e "$*"
@@ -1361,7 +1362,7 @@ kv.show() {
 # Code: No
 # Echo: No
 kv.showm() {
-  if [[ -n "$2" && -n "$COLORS_ALLOWED" ]] ; then
+  if [[ -n "$2" && -n "${kv[use_colors]}" ]] ; then
     echo -e -n "\e[${2}m${1}\e[0m"
   else
     echo -e -n "$*"
@@ -1860,7 +1861,7 @@ kvStart() {
     return $ACTION_ERROR
   fi
 
-  local retcode
+  local retcode retcode_post
 
   kvFixIfNotInStatus $STATUS_STOPPED
 
@@ -1881,11 +1882,13 @@ kvStart() {
 
   if [[ -n "${kv_dout[start_post]}" ]] ; then
     kvExecDefHandler "start" "post" "$@"
+    retcode_post=$?
   else
     kvExecDefHandler "start" "post" "$@" &>> "${kv[output]}"
+    retcode_post=$?
   fi
 
-  [[ $? -ne $retcode && $retcode -eq $ACTION_OK ]] && retcode=$?
+  [[ $retcode_post -ne $retcode && $retcode -eq $ACTION_OK ]] && retcode=$retcode_post
 
   if [[ $retcode -eq $ACTION_OK ]] ; then
     [[ -n "${kv[auto_lock]}" ]] && kv.createLock
@@ -1924,7 +1927,7 @@ kvStop() {
     return $ACTION_ERROR
   fi
 
-  local retcode
+  local retcode retcode_post
 
   kvFixIfNotInStatus $STATUS_RUNNING
 
@@ -1947,11 +1950,13 @@ kvStop() {
 
   if [[ -n "${kv_dout[stop_post]}" ]] ; then
     kvExecDefHandler "stop" "post" "$@"
+    retcode_post=$?
   else
     kvExecDefHandler "stop" "post" "$@" &>> "${kv[output]}"
+    retcode_post=$?
   fi
 
-  [[ $? -ne $retcode && $retcode -eq $ACTION_OK ]] && retcode=$?
+  [[ $retcode_post -ne $retcode && $retcode -eq $ACTION_OK ]] && retcode=$retcode_post
 
   if [[ $retcode -eq $ACTION_OK || $retcode -eq $ACTION_FORCED ]] ; then
     [[ -n "${kv[auto_lock]}" ]] && kv.removeLock
@@ -2244,8 +2249,10 @@ kvFixProblems() {
       pid=$(kv.findPID)
       [[ -z "$pid" ]] && kv.showStatusMessage $ACTION_ERROR && return
 
-      echo "$pid" 1> "${kv[pid_file]}" 2> /dev/null
-      [[ $? -ne 0 ]] && kv.showStatusMessage $ACTION_ERROR && return
+      if ! echo "$pid" 1> "${kv[pid_file]}" 2> /dev/null ; then
+        kv.showStatusMessage $ACTION_ERROR
+        return
+      fi
 
       if [[ -n "${kv[user]}" ]] ; then
         chown "${kv[user]}:" "${kv[pid_file]}"
@@ -2361,6 +2368,30 @@ kvGetBootTimestamp() {
 # Echo: Modification timestamp (Number)
 kvGetFileModDate() {
   stat -c '%Y' "$1" 2> /dev/null
+}
+
+# -
+#
+# Check if system supports colored output
+#
+# Code: Yes
+# Echo: No
+kvIsColorsSupported() {
+  if [[ -n "$NO_COLOR" ]] ; then
+    return 1
+  fi
+
+  if [[ -z "${kv[use_colors]}" ]] ; then
+    return 1
+  fi
+
+  if kv.isInstalled "tput" ; then
+    if [[ $(tput colors 2>/dev/null) -lt 16 ]] ; then
+      return 1
+    fi
+  fi
+
+  return 0
 }
 
 ###############################################################################
