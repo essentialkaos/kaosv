@@ -19,7 +19,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.17.0"
+KV_VERSION="2.17.1"
 
 ###############################################################################
 
@@ -251,6 +251,9 @@ kv[auto_actions_log]=""
 
 # Automatically search PID if PID file doesn't exist (Boolean)
 kv[auto_pid_search]=true
+
+# Redirect command to systemd if possible (Boolean)
+kv[systemd_redirect]=true
 
 # Time in seconds for service start (Number)
 kv[delay_start]=15
@@ -2428,7 +2431,7 @@ kvIsSystemdPresent() {
 # Code: Yes
 # Echo: No
 kvIsSystemdCall() {
-  if [[ -n "$INVOCATION_ID" ]] ; then
+  if ! env | grep -q "SYSTEMCTL_SKIP_REDIRECT" ; then
     return 0
   fi
 
@@ -2467,6 +2470,10 @@ kvIsSystemdCompatibleCommand() {
     return 1
   fi
 
+  if [[ -z "${kv[systemd_redirect]}" ]] ; then
+    return 1
+  fi
+
   case "$1" in
     "start")   return 0 ;;
     "restart") return 0 ;;
@@ -2488,9 +2495,9 @@ kvExecSystemdCommand() {
   local comm="$1"
 
   case "$comm" in
-    "start")   kv.showm "${CL_BOLD}Starting ${kv[prog_name]} ${CL_DARK}(systemd)${CL_BOLD}: ${CL_NORM}" ;;
-    "stop")    kv.showm "${CL_BOLD}Stopping ${kv[prog_name]} ${CL_DARK}(systemd)${CL_BOLD}: ${CL_NORM}" ;;
-    "restart") kv.showm "${CL_BOLD}Restarting ${kv[prog_name]} ${CL_DARK}(systemd)${CL_BOLD}: ${CL_NORM}" ;;
+    "start")   kv.showm "${CL_BOLD}Starting ${kv[prog_name]} ${CL_DARK}(via systemd)${CL_BOLD}: ${CL_NORM}" ;;
+    "stop")    kv.showm "${CL_BOLD}Stopping ${kv[prog_name]} ${CL_DARK}(via systemd)${CL_BOLD}: ${CL_NORM}" ;;
+    "restart") kv.showm "${CL_BOLD}Restarting ${kv[prog_name]} ${CL_DARK}(via systemd)${CL_BOLD}: ${CL_NORM}" ;;
   esac
 
   if systemctl "$comm" "${kv[script]}.service" &> /dev/null; then
