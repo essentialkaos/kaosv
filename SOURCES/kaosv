@@ -2478,6 +2478,7 @@ kvIsSystemdCompatibleCommand() {
     "start")   return 0 ;;
     "restart") return 0 ;;
     "stop")    return 0 ;;
+    "status")  return 0 ;;
   esac
 
   return 1
@@ -2493,6 +2494,11 @@ kvIsSystemdCompatibleCommand() {
 # Echo: No
 kvExecSystemdCommand() {
   local comm="$1"
+
+  if [[ "$comm" == "status" ]] ; then
+    systemctl status "${kv[script]}.service"
+    return $?
+  fi
 
   case "$comm" in
     "start")   kv.showm "${CL_BOLD}Starting ${kv[prog_name]} ${CL_DARK}(via systemd)${CL_BOLD}: ${CL_NORM}" ;;
