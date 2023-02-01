@@ -2449,7 +2449,7 @@ kvHasSystemdService() {
     return 1
   fi
 
-  if [[ -n $(systemctl list-units --all -t service --full --no-legend "${kv[script]}.service" 2> /dev/null) ]] ; then
+  if systemctl list-unit-files 2> /dev/null | grep -q "${kv[script]}.service" ; then
     return 0
   fi
 
