@@ -1,11 +1,11 @@
 ########################################################################################
 
 .DEFAULT_GOAL := help
-.PHONY = install install-shellcheck test help
+.PHONY = install uninstall get-shellcheck test help
 
 ########################################################################################
 
-install-shellcheck: ## Download and install the latest version of shellcheck (requires sudo)
+get-shellcheck: ## Download and install the latest version of shellcheck (requires sudo)
 ifneq ($(shell id -u), 0)
 	@echo -e "\e[31m▲ This target requires sudo\e[0m"
 	@exit 1
@@ -32,10 +32,22 @@ endif
 	@echo -e "\e[1;36;49m\nInstalling app…\n\e[0m"
 	install -dDm 755 /etc/rc.d/init.d/kaosv
 	install -dDm 755 /usr/local/share/kaosv
-	install -pm 755 SOURCES/kaosv /etc/rc.d/init.d/kaosv
+	install -pm 755 SOURCES/kaosv /etc/rc.d/init.d/
 	install -pm 755 SOURCES/supervisor /usr/local/share/kaosv/
 
 	@echo -e "\e[1;32;49m\nApp successfully installed!\n\e[0m"
+
+uninstall: ## Uninstall app from current system (requires sudo)
+ifneq ($(shell id -u), 0)
+	@echo -e "\e[31m▲ This target requires sudo\e[0m"
+	@exit 1
+endif
+
+	@echo -e "\e[1;36;49m\nUninstalling app…\n\e[0m"
+	rm -f /etc/rc.d/init.d/kaosv || :
+	rm -rf /usr/local/share/kaosv || :
+
+	@echo -e "\e[1;32;49m\nApp successfully uninstalled!\n\e[0m"
 
 help: ## Show this info
 	@echo -e '\nSupported targets:\n'
