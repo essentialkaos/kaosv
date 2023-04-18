@@ -203,7 +203,7 @@ rm -rf %{buildroot}
 - Fixed minor bug with output for unknown commands
 
 * Wed Oct 28 2015 Anton Novojilov <andy@essentialkaos.com> - 2.7.0-0
-- Return exit code 3 for status command if service is stoppped
+- Return exit code 3 for status command if service is stopped
 
 * Sat Oct 24 2015 Anton Novojilov <andy@essentialkaos.com> - 2.6.1-0
 - Minor improvements

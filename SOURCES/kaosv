@@ -193,7 +193,7 @@ SYSCONFIG_DIR="/etc/sysconfig"
 HELP_SEPARATOR_LENGTH=2
 
 # -
-# Template for temorary data
+# Template for temporary data
 TMP_TEMPLATE="/tmp/kaosv.XXXXXXXX"
 
 # -
