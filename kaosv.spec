@@ -32,21 +32,21 @@
 
 ################################################################################
 
-Summary:         Bash lib for SysV init scripts
-Name:            kaosv
-Version:         2.16.0
-Release:         0%{?dist}
-Group:           Applications/System
-License:         Apache License, Version 2.0
-URL:             https://github.com/essentialkaos/kaosv
-Vendor:          ESSENTIAL KAOS
+Summary:    Bash lib for SysV init scripts
+Name:       kaosv
+Version:    2.17.1
+Release:    0%{?dist}
+Group:      Applications/System
+License:    Apache License, Version 2.0
+URL:        https://kaos.sh/kaosv
+Vendor:     ESSENTIAL KAOS
 
-Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
+Source0:    https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
 
-BuildArch:       noarch
-BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildArch:  noarch
+BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires:        daemonize bash >= 4.0 rpm
+Requires:   daemonize bash >= 4.0 rpm
 
 ################################################################################
 
@@ -83,6 +83,16 @@ rm -rf %{buildroot}
 ################################################################################
 
 %changelog
+* Wed Feb 01 2023 Anton Novojilov <andy@essentialkaos.com> - 2.17.1-0
+- Fixed bug with checking systemd call on EL 7
+
+* Tue Jan 17 2023 Anton Novojilov <andy@essentialkaos.com> - 2.17.0-0
+- Added backward compatibility with systemd for start, stop and restart commands
+- Removed deprecated consoletype usage
+- Improved colors support check
+- Added NO_COLOR support
+- Code refactoring
+
 * Fri May 15 2020 Anton Novojilov <andy@essentialkaos.com> - 2.16.0-0
 - Added `kv.chmod` and `kv.chown` functions
 
@@ -193,7 +203,7 @@ rm -rf %{buildroot}
 - Fixed minor bug with output for unknown commands
 
 * Wed Oct 28 2015 Anton Novojilov <andy@essentialkaos.com> - 2.7.0-0
-- Return exit code 3 for status command if service is stoppped
+- Return exit code 3 for status command if service is stopped
 
 * Sat Oct 24 2015 Anton Novojilov <andy@essentialkaos.com> - 2.6.1-0
 - Minor improvements
