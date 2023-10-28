@@ -19,7 +19,7 @@ fi
 ###############################################################################
 
 # Current version of KAOSv
-KV_VERSION="2.17.1"
+KV_VERSION="2.17.2"
 
 ###############################################################################
 
@@ -2472,6 +2472,16 @@ kvIsSystemdCompatibleCommand() {
 
   if [[ -z "${kv[systemd_redirect]}" ]] ; then
     return 1
+  fi
+
+  # Extra check if service was started before with previous version of
+  # kaosv without redirect to systemd
+  if [[ "$(kv.getStatus)" == "$STATUS_RUNNING" ]] ; then
+    local systemdState
+    systemdState=$(systemctl show "${kv[prog_name]}.service" -p ActiveState | tr -d '\r\n')
+    if [[ "$systemdState" != "ActiveState=active" ]] ; then
+      return 1
+    fi
   fi
 
   case "$1" in
