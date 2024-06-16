@@ -1,11 +1,11 @@
-<p align="center"><a href="#readme"><img src="https://gh.kaos.st/kaosv.svg"/></a></p>
+<p align="center"><a href="#readme"><img src=".github/images/card.svg"/></a></p>
 
 <p align="center">
   <a href="https://kaos.sh/w/kaosv/ci"><img src="https://kaos.sh/w/kaosv/ci.svg" alt="GitHub Actions CI Status" /></a>
-  <a href="#license"><img src="https://gh.kaos.st/apache2.svg"></a>
+  <a href="#license"><img src=".github/images/license.svg"/></a>
 </p>
 
-<p align="center"><a href="#documentation">Documentation</a> • <a href="#examples">Examples</a> • <a href="#common-mistakes">Common mistakes</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#documentation">Documentation</a> • <a href="#examples">Examples</a> • <a href="#common-mistakes">Common mistakes</a> • <a href="#ci-status">CI Status</a> • <a href="#license">License</a></p>
 
 <br/>
 
@@ -37,7 +37,7 @@ You should define a pre-start handler with [disabled output redirect](https://do
 
 All handlers must always return action status code (`ACTION_OK`, `ACTION_ERROR`, `ACTION_FORCED`) otherwise it can be exit code from the last command performed in this handler.
 
-### Build Status
+### CI Status
 
 | Branch | Status |
 |--------|--------|
