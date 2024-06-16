@@ -5,7 +5,7 @@
   <a href="#license"><img src=".github/images/license.svg"/></a>
 </p>
 
-<p align="center"><a href="#documentation">Documentation</a> • <a href="#examples">Examples</a> • <a href="#common-mistakes">Common mistakes</a> • <a href="#build-status">Build Status</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#documentation">Documentation</a> • <a href="#examples">Examples</a> • <a href="#common-mistakes">Common mistakes</a> • <a href="#ci-status">CI Status</a> • <a href="#license">License</a></p>
 
 <br/>
 
@@ -37,7 +37,7 @@ You should define a pre-start handler with [disabled output redirect](https://do
 
 All handlers must always return action status code (`ACTION_OK`, `ACTION_ERROR`, `ACTION_FORCED`) otherwise it can be exit code from the last command performed in this handler.
 
-### Build Status
+### CI Status
 
 | Branch | Status |
 |--------|--------|
