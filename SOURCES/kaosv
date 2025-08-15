@@ -1356,7 +1356,7 @@ kv.warn() {
 # Echo: No
 #
 # Example:
-# show "Signal sended"
+# show "Signal sent"
 # show "Can't do some action" $RED
 kv.show() {
   if [[ -n "$2" && -n "${kv[use_colors]}" ]] ; then
